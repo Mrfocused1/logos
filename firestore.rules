@@ -1,0 +1,41 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isValidTestimonial() {
+      let data = request.resource.data;
+      return data.name is string && data.name.size() >= 2 && data.name.size() <= 50
+        && data.company is string && data.company.size() >= 2 && data.company.size() <= 100
+        && data.quote is string && data.quote.size() >= 10 && data.quote.size() <= 300
+        && data.photoUrl is string && data.photoUrl.matches('https://.*');
+    }
+
+    function isValidInvoice() {
+      let data = request.resource.data;
+      return data.serviceTitle is string && data.serviceTitle.size() >= 5 && data.serviceTitle.size() <= 150
+        && data.amount is number && data.amount > 0 && data.amount <= 10000
+        && data.paymentLink is string && data.paymentLink.matches('https://.*')
+        && data.urlSlug is string && data.urlSlug.matches('^[a-z0-9-]{3,50}$');
+    }
+
+    // Testimonials collection
+    match /testimonials/{testimonialId} {
+      allow read: if true; // Public read
+      allow create: if isAuthenticated() && isValidTestimonial();
+      allow update: if isAuthenticated() && isValidTestimonial();
+      allow delete: if isAuthenticated();
+    }
+
+    // Invoices collection
+    match /invoices/{invoiceId} {
+      allow read: if true; // Public read (by URL)
+      allow create: if isAuthenticated() && isValidInvoice();
+      allow update: if isAuthenticated() && isValidInvoice();
+      allow delete: if isAuthenticated();
+    }
+  }
+}
