@@ -7,6 +7,7 @@ export { default as Loader, SkeletonCard, SkeletonTable, SkeletonForm } from './
 export { default as DisplayCards } from './DisplayCard';
 export { TextRotate } from './TextRotate';
 export { SlideButton } from './SlideButton';
+export { InteractiveHoverButton } from './InteractiveHoverButton';
 export { Squares } from './Squares';
 export { TextRevealByWord } from './TextRevealByWord';
 export { AnimatedCounter } from './AnimatedCounter';

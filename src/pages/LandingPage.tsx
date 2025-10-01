@@ -3,6 +3,7 @@ import { motion, LayoutGroup } from 'framer-motion';
 import { CheckCircle, Palette, Users, CreditCard, FileText, BookOpen } from 'lucide-react';
 import {
   SlideButton,
+  InteractiveHoverButton,
   GlassCard,
   TextRotate,
   TextRevealByWord,
@@ -188,9 +189,10 @@ const LandingPage: React.FC = () => {
             variants={itemVariants}
             className="flex justify-center items-center mb-16"
           >
-            <SlideButton
-              onSlideComplete={handlePayNow}
-              aria-label="Slide to navigate to invoice payment"
+            <InteractiveHoverButton
+              text="Pay Now"
+              onClick={handlePayNow}
+              className="w-40 h-12 text-black border-black"
             />
           </motion.div>
 
