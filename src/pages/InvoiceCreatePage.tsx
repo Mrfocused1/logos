@@ -25,7 +25,7 @@ const InvoiceCreatePage: React.FC = () => {
     customSlug: '',
     dueDate: calculateDueDate(30),
     items: [{ description: '', quantity: 1, unitPrice: 0 }],
-    taxRate: 20,
+    taxRate: 0,
     notes: '',
     paymentTerms: DEFAULT_PAYMENT_TERMS[0]
   });
@@ -47,12 +47,6 @@ const InvoiceCreatePage: React.FC = () => {
     // Required fields
     if (!formData.clientName.trim()) {
       newErrors.clientName = 'Client name is required';
-    }
-
-    if (!formData.clientEmail.trim()) {
-      newErrors.clientEmail = 'Client email is required';
-    } else if (!validateEmail(formData.clientEmail)) {
-      newErrors.clientEmail = 'Please enter a valid email address';
     }
 
     if (!formData.dueDate) {
@@ -241,21 +235,6 @@ const InvoiceCreatePage: React.FC = () => {
                   required
                 />
                 <Input
-                  label="Client Email"
-                  type="email"
-                  placeholder="client@example.com"
-                  value={formData.clientEmail}
-                  onChange={(e) => setFormData(prev => ({ ...prev, clientEmail: e.target.value }))}
-                  error={errors.clientEmail}
-                  required
-                />
-                <Input
-                  label="Phone Number"
-                  placeholder="Enter phone number"
-                  value={formData.clientPhone}
-                  onChange={(e) => setFormData(prev => ({ ...prev, clientPhone: e.target.value }))}
-                />
-                <Input
                   label="Custom URL Slug"
                   placeholder="my-client-invoice"
                   value={formData.customSlug}
@@ -264,24 +243,12 @@ const InvoiceCreatePage: React.FC = () => {
                   helperText="Optional: Create a custom URL for easy sharing"
                 />
               </div>
-              <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Client Address
-                </label>
-                <textarea
-                  className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
-                  rows={3}
-                  placeholder="Enter client address"
-                  value={formData.clientAddress}
-                  onChange={(e) => setFormData(prev => ({ ...prev, clientAddress: e.target.value }))}
-                />
-              </div>
             </GlassCard>
 
             {/* Invoice Details */}
             <GlassCard className="p-6 bg-white/90 backdrop-blur-sm border border-gray-200">
               <h2 className="text-xl font-semibold text-black mb-4">Invoice Details</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 <Input
                   label="Due Date"
                   type="date"
@@ -290,29 +257,6 @@ const InvoiceCreatePage: React.FC = () => {
                   error={errors.dueDate}
                   required
                 />
-                <Input
-                  label="Tax Rate (%)"
-                  type="number"
-                  min="0"
-                  max="100"
-                  step="0.01"
-                  value={formData.taxRate}
-                  onChange={(e) => setFormData(prev => ({ ...prev, taxRate: parseFloat(e.target.value) || 0 }))}
-                />
-              </div>
-              <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Payment Terms
-                </label>
-                <select
-                  className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-                  value={formData.paymentTerms}
-                  onChange={(e) => setFormData(prev => ({ ...prev, paymentTerms: e.target.value }))}
-                >
-                  {DEFAULT_PAYMENT_TERMS.map(term => (
-                    <option key={term} value={term}>{term}</option>
-                  ))}
-                </select>
               </div>
             </GlassCard>
 
@@ -422,10 +366,6 @@ const InvoiceCreatePage: React.FC = () => {
                   <span className="text-gray-600">Subtotal:</span>
                   <span className="text-gray-900">{formatCurrency(subtotal)}</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Tax ({formData.taxRate}%):</span>
-                  <span className="text-gray-900">{formatCurrency(taxAmount)}</span>
-                </div>
                 <div className="border-t border-gray-200 pt-3">
                   <div className="flex justify-between">
                     <span className="font-semibold text-black">Total:</span>
@@ -506,11 +446,6 @@ const InvoiceCreatePage: React.FC = () => {
                   <h3 className="font-semibold text-gray-900 mb-2">Bill To:</h3>
                   <div className="text-sm text-gray-600">
                     <p className="font-medium">{generatedInvoice.clientName}</p>
-                    <p>{generatedInvoice.clientEmail}</p>
-                    {generatedInvoice.clientAddress && (
-                      <p className="whitespace-pre-line">{generatedInvoice.clientAddress}</p>
-                    )}
-                    {generatedInvoice.clientPhone && <p>{generatedInvoice.clientPhone}</p>}
                   </div>
                 </div>
                 <div className="text-right">
@@ -552,10 +487,6 @@ const InvoiceCreatePage: React.FC = () => {
                     <span className="text-gray-600">Subtotal:</span>
                     <span className="text-gray-900">{formatCurrency(generatedInvoice.subtotal)}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Tax ({generatedInvoice.taxRate}%):</span>
-                    <span className="text-gray-900">{formatCurrency(generatedInvoice.taxAmount)}</span>
-                  </div>
                   <div className="border-t border-gray-200 pt-2">
                     <div className="flex justify-between">
                       <span className="font-semibold text-black">Total:</span>
@@ -573,13 +504,6 @@ const InvoiceCreatePage: React.FC = () => {
                 </div>
               )}
 
-              {/* Payment Terms */}
-              {generatedInvoice.paymentTerms && (
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-2">Payment Terms:</h3>
-                  <p className="text-sm text-gray-600">{generatedInvoice.paymentTerms}</p>
-                </div>
-              )}
             </div>
           </Modal>
         )}
