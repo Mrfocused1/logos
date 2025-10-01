@@ -1,155 +1,139 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { motion, LayoutGroup } from 'framer-motion';
-import { ArrowRight, Palette, Sparkles, Zap, Star, CheckCircle, Users, Award, TrendingUp } from 'lucide-react';
-import { Button, GlassCard, DisplayCards, TextRotate, SlideButton, Squares, TextRevealByWord, AnimatedCounter } from '../components/ui';
-
-// Animation variants
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, ease: 'easeOut' },
-  },
-};
-
-const floatVariants = {
-  animate: {
-    y: [0, -20, 0],
-    rotate: [0, 5, 0, -5, 0],
-    transition: {
-      duration: 6,
-      repeat: Infinity,
-      ease: 'easeInOut',
-    },
-  },
-};
-
-const pulseVariants = {
-  animate: {
-    scale: [1, 1.05, 1],
-    opacity: [0.7, 1, 0.7],
-    transition: {
-      duration: 3,
-      repeat: Infinity,
-      ease: 'easeInOut',
-    },
-  },
-};
-
-// Service data
-const services = [
-  {
-    id: '1',
-    title: 'Brand Identity',
-    description: 'Create a distinctive visual identity that captures your brand essence and resonates with your audience.',
-    icon: Palette,
-    features: ['Logo Design', 'Brand Guidelines', 'Color Palettes', 'Typography'],
-  },
-  {
-    id: '2',
-    title: 'Graphic Design',
-    description: 'From marketing materials to social media graphics, we bring your vision to life with stunning visuals.',
-    icon: Sparkles,
-    features: ['Marketing Collateral', 'Social Media Graphics', 'Print Design', 'Digital Assets'],
-  },
-  {
-    id: '3',
-    title: 'Creative Solutions',
-    description: 'Innovative design solutions tailored to your unique needs and business goals.',
-    icon: Zap,
-    features: ['Custom Illustrations', 'Packaging Design', 'Presentation Design', 'Infographics'],
-  },
-];
-
-// Testimonial data
-const testimonials = [
-  {
-    id: '1',
-    name: 'Sarah Johnson',
-    role: 'CEO',
-    company: 'TechStart Inc',
-    content: 'BOLA LOGOS transformed our brand identity with exceptional creativity and professionalism. The results exceeded our expectations!',
-    avatar: 'SJ',
-    rating: 5,
-  },
-  {
-    id: '2',
-    name: 'Michael Chen',
-    role: 'Marketing Director',
-    company: 'GrowthLab',
-    content: 'Outstanding work! The team delivered high-quality designs that perfectly captured our vision. Highly recommended!',
-    avatar: 'MC',
-    rating: 5,
-  },
-  {
-    id: '3',
-    name: 'Emily Rodriguez',
-    role: 'Founder',
-    company: 'Creative Hub',
-    content: 'Working with BOLA LOGOS was a game-changer for our business. Their attention to detail is unmatched.',
-    avatar: 'ER',
-    rating: 5,
-  },
-  {
-    id: '4',
-    name: 'David Thompson',
-    role: 'Brand Manager',
-    company: 'Innovate Co',
-    content: 'Professional, responsive, and incredibly talented. They brought our brand to life in ways we never imagined.',
-    avatar: 'DT',
-    rating: 5,
-  },
-];
+import { CheckCircle, Palette, Users, CreditCard, FileText, BookOpen } from 'lucide-react';
+import {
+  SlideButton,
+  GlassCard,
+  TextRotate,
+  TextRevealByWord,
+  AnimatedCounter,
+  AvatarGroup,
+  TypewriterEffect,
+  ServicesColumn,
+  ContactForm,
+  Squares
+} from '../components/ui';
 
 const LandingPage: React.FC = () => {
-  const navigate = useNavigate();
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+        delayChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: "easeOut" }
+    },
+  };
 
   const handlePayNow = () => {
-    navigate('/invoice/create');
+    window.location.href = '/invoice/create';
   };
 
-  const handleLearnMore = () => {
-    const servicesSection = document.getElementById('services');
-    if (servicesSection) {
-      servicesSection.scrollIntoView({ behavior: 'smooth' });
+  const clientAvatars = [
+    {
+      id: 1,
+      name: "Sarah Johnson",
+      designation: "CEO",
+      image: "https://images.unsplash.com/photo-1494790108755-2616b96a7e4c?w=150&h=150&fit=crop&crop=face"
+    },
+    {
+      id: 2,
+      name: "Michael Chen",
+      designation: "Designer",
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
+    },
+    {
+      id: 3,
+      name: "Emily Rodriguez",
+      designation: "Marketing",
+      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face"
+    },
+    {
+      id: 4,
+      name: "David Kim",
+      designation: "Developer",
+      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
+    },
+    {
+      id: 5,
+      name: "Lisa Wang",
+      designation: "Product Manager",
+      image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face"
+    },
+    {
+      id: 6,
+      name: "James Wilson",
+      designation: "Founder",
+      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face"
     }
-  };
+  ];
+
+  const servicesData = [
+    {
+      text: "Professional logo design that captures your brand essence",
+      icon: <Palette className="w-6 h-6 text-black" />,
+      name: "Logo Design",
+      features: ["Multiple concepts", "Vector files", "Brand guidelines"]
+    },
+    {
+      text: "Complete brand identity systems for cohesive visual presence",
+      icon: <Users className="w-6 h-6 text-black" />,
+      name: "Brand Identity",
+      features: ["Color palette", "Typography", "Style guide"]
+    },
+    {
+      text: "Professional business cards that make lasting impressions",
+      icon: <CreditCard className="w-6 h-6 text-black" />,
+      name: "Business Cards",
+      features: ["Print-ready", "Double-sided", "Premium finishes"]
+    },
+    {
+      text: "Custom letterheads for professional correspondence",
+      icon: <FileText className="w-6 h-6 text-black" />,
+      name: "Letterheads",
+      features: ["Corporate design", "Print templates", "Digital versions"]
+    },
+    {
+      text: "Eye-catching brochures that tell your story effectively",
+      icon: <BookOpen className="w-6 h-6 text-black" />,
+      name: "Brochures",
+      features: ["Tri-fold design", "High-quality images", "Compelling copy"]
+    }
+  ];
 
   return (
-    <div className="min-h-screen relative">
-      {/* Animated grid background */}
-      <div className="fixed inset-0 z-0 opacity-10">
+    <div className="min-h-screen bg-white text-gray-900 relative overflow-hidden">
+      {/* Animated Grid Background */}
+      <div className="fixed inset-0 z-0">
         <Squares
           direction="diagonal"
           speed={0.3}
-          borderColor="rgba(0, 0, 0, 0.2)"
+          borderColor="rgba(0, 0, 0, 0.02)"
           squareSize={60}
-          hoverFillColor="rgba(0, 0, 0, 0.1)"
+          hoverFillColor="rgba(0, 0, 0, 0.01)"
         />
       </div>
+
       {/* Skip to main content link for accessibility */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-white focus:text-primary focus:rounded-lg focus:shadow-lg"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-black text-white px-4 py-2 rounded z-50"
       >
         Skip to main content
       </a>
+
       {/* Hero Section */}
       <section id="main-content" className="relative min-h-screen flex items-start justify-center px-4 pt-16 pb-8 sm:pt-24 sm:pb-20 overflow-hidden z-10">
-        {/* @ts-expect-error - Framer Motion type inference issue with className */}
         <motion.div
           className="max-w-6xl mx-auto text-center relative z-10"
           initial="hidden"
@@ -157,7 +141,6 @@ const LandingPage: React.FC = () => {
           variants={containerVariants}
         >
           <motion.div variants={itemVariants} className="mb-8">
-
             <LayoutGroup>
               <motion.h1
                 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-heading text-gray-900 mb-6 leading-tight flex flex-wrap items-center justify-center gap-4"
@@ -210,11 +193,10 @@ const LandingPage: React.FC = () => {
             />
           </motion.div>
 
-
           {/* Stats Row */}
           <motion.div
             variants={itemVariants}
-            className="grid grid-cols-3 gap-2 sm:gap-4 max-w-3xl mx-auto mb-2"
+            className="grid grid-cols-3 gap-2 sm:gap-4 max-w-3xl mx-auto mb-4"
           >
             <div className="text-center p-2 sm:p-6">
               <div className="flex flex-col items-center">
@@ -242,17 +224,29 @@ const LandingPage: React.FC = () => {
             </div>
           </motion.div>
 
+          {/* Popular Clients */}
+          <motion.div
+            variants={itemVariants}
+            className="mt-8 mb-4"
+          >
+            <p className="text-lg text-gray-600 mb-4">Popular clients</p>
+            <AvatarGroup
+              items={clientAvatars}
+              maxVisible={5}
+              size="lg"
+              className="justify-center"
+            />
+          </motion.div>
         </motion.div>
-
       </section>
 
       {/* Text Reveal Section */}
       <TextRevealByWord
-        text="I believe exceptional design transforms businesses and captivates audiences. Every project begins with understanding your vision and translating it into powerful visual narratives that resonate with your target market. My commitment to excellence drives me to deliver designs that not only look stunning but also achieve measurable results. From concept to completion, I collaborate closely with clients to ensure every detail reflects their brand identity and exceeds expectations. Design is not just what I create, it is how I solve problems and tell stories that inspire action."
+        text="I believe exceptional design transforms businesses and captivates audiences. Every project begins with understanding your vision and translating it into powerful visual narratives that drive results and inspire action."
         className="relative z-10"
       />
 
-      {/* Services Section */}
+      {/* Services Section with Typewriter Effect */}
       <section id="services" className="relative px-4 py-20 sm:py-32 overflow-visible z-10" aria-labelledby="services-heading">
         <div className="max-w-7xl mx-auto relative z-10">
           <motion.div
@@ -264,41 +258,51 @@ const LandingPage: React.FC = () => {
           >
             <motion.div
               variants={itemVariants}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-300/30 backdrop-blur-sm mb-4"
+              className="mb-8"
             >
-              <Sparkles className="w-4 h-4 text-purple-600" />
-              <span className="text-sm font-semibold text-purple-700">What We Offer</span>
+              <TypewriterEffect
+                words={[
+                  { text: "My" },
+                  { text: "Services", className: "text-black" },
+                ]}
+                className="text-3xl sm:text-4xl lg:text-5xl font-bold font-heading"
+                cursorClassName="bg-black"
+              />
             </motion.div>
-            <motion.h2
-              id="services-heading"
-              variants={itemVariants}
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold font-heading text-gray-900 mb-4"
-            >
-              Our Services
-            </motion.h2>
             <motion.p
               variants={itemVariants}
-              className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto"
+              className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto mb-12"
             >
               Comprehensive graphic design solutions tailored to elevate your brand
             </motion.p>
-          </motion.div>
 
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-100px' }}
-            variants={containerVariants}
-            className="flex justify-center items-center py-16 overflow-visible"
-          >
-            <DisplayCards services={services} />
+            {/* Animated Services Columns */}
+            <motion.div
+              variants={itemVariants}
+              className="flex justify-center gap-6 max-w-6xl mx-auto overflow-hidden"
+              style={{ height: '400px' }}
+            >
+              <ServicesColumn
+                services={servicesData}
+                duration={35}
+                className="flex-1 max-w-xs"
+              />
+              <ServicesColumn
+                services={[...servicesData].reverse()}
+                duration={30}
+                className="flex-1 max-w-xs hidden md:block"
+              />
+              <ServicesColumn
+                services={servicesData}
+                duration={40}
+                className="flex-1 max-w-xs hidden lg:block"
+              />
+            </motion.div>
           </motion.div>
         </div>
-
       </section>
 
-
-      {/* CTA Section */}
+      {/* Contact Section */}
       <section className="relative px-4 py-16 sm:py-24 overflow-hidden z-10">
         <div className="max-w-4xl mx-auto relative z-10">
           <motion.div
@@ -309,20 +313,9 @@ const LandingPage: React.FC = () => {
           >
             <GlassCard variant="strong" className="text-center relative overflow-hidden">
               {/* Decorative gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-pink-500/5 to-blue-500/5 rounded-3xl" />
+              <div className="absolute inset-0 bg-gradient-to-br from-gray-500/5 via-gray-600/5 to-gray-700/5 rounded-3xl" />
 
               <div className="relative z-10">
-                <motion.div
-                  initial={{ scale: 0 }}
-                  whileInView={{ scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.2, duration: 0.5, type: 'spring' }}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-300/30 backdrop-blur-sm mb-6"
-                >
-                  <Zap className="w-4 h-4 text-purple-600" />
-                  <span className="text-sm font-semibold text-purple-700">Start Your Journey Today</span>
-                </motion.div>
-
                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-heading text-gray-900 mb-4">
                   Ready to Transform Your Brand?
                 </h2>
@@ -330,18 +323,14 @@ const LandingPage: React.FC = () => {
                   Let's work together to create something extraordinary that captivates your audience
                 </p>
 
-                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                  <Button
-                    variant="primary"
-                    size="lg"
-                    onClick={handlePayNow}
-                    className="group shadow-xl shadow-purple-500/20"
-                    aria-label="Get started with invoice payment"
-                  >
-                    Get Started
-                    <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
-                  </Button>
-                </div>
+                {/* Contact Form */}
+                <ContactForm
+                  onSubmit={(data) => {
+                    console.log('Contact form submitted:', data);
+                    // Handle form submission here
+                  }}
+                  className="text-left"
+                />
 
                 {/* Features row */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-12 pt-8 border-t border-white/20">
@@ -362,7 +351,6 @@ const LandingPage: React.FC = () => {
             </GlassCard>
           </motion.div>
         </div>
-
       </section>
 
       {/* Footer */}

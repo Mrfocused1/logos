@@ -10,5 +10,11 @@ export { SlideButton } from './SlideButton';
 export { Squares } from './Squares';
 export { TextRevealByWord } from './TextRevealByWord';
 export { AnimatedCounter } from './AnimatedCounter';
+export { AvatarGroup } from './AvatarGroup';
+export { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from './Accordion';
+export { BlurredStagger } from './BlurredStagger';
+export { TypewriterEffect } from './TypewriterEffect';
+export { ServicesColumn } from './ServicesColumn';
+export { ContactForm } from './ContactForm';
 
 export type { ToastProps } from './Toast';

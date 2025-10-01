@@ -1,4 +1,4 @@
-import { FC, ReactNode, useRef } from "react";
+import { FC, ReactNode, useRef, useEffect, useState } from "react";
 import { motion, MotionValue, useScroll, useTransform } from "framer-motion";
 import { cn } from "../../utils/cn";
 
@@ -12,19 +12,70 @@ const TextRevealByWord: FC<TextRevealByWordProps> = ({
   className,
 }) => {
   const targetRef = useRef<HTMLDivElement | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [animationComplete, setAnimationComplete] = useState(false);
 
   const { scrollYProgress } = useScroll({
     target: targetRef,
-    offset: ["start 0.5", "end 0.1"]
+    offset: ["start 0.6", "end 0.1"]
   });
   const words = text.split(" ");
 
+  // Check if mobile device
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Monitor animation progress
+  useEffect(() => {
+    const unsubscribe = scrollYProgress.on("change", (latest) => {
+      if (latest >= 0.95) {
+        setAnimationComplete(true);
+      } else {
+        setAnimationComplete(false);
+      }
+    });
+    return unsubscribe;
+  }, [scrollYProgress]);
+
+  // Apply scroll behavior based on animation state
+  useEffect(() => {
+    if (isMobile) {
+      const container = targetRef.current;
+      if (container && !animationComplete) {
+        container.style.scrollSnapType = 'y mandatory';
+        container.style.scrollSnapAlign = 'start';
+      } else if (container) {
+        container.style.scrollSnapType = '';
+        container.style.scrollSnapAlign = '';
+      }
+    }
+  }, [isMobile, animationComplete]);
+
   return (
-    <div ref={targetRef} className={cn("relative z-0 h-[180vh]", className)}>
+    <div
+      ref={targetRef}
+      className={cn(
+        "relative z-0 h-[200vh] md:h-[120vh]",
+        isMobile && !animationComplete ? "md:snap-start md:snap-mandatory" : "",
+        className
+      )}
+      style={{
+        scrollSnapType: isMobile && !animationComplete ? 'y mandatory' : 'none',
+      }}
+    >
       <div
-        className={
-          "sticky top-[100px] mx-auto flex h-[50%] max-w-7xl items-center bg-transparent px-4 lg:px-8 py-0"
-        }
+        className={cn(
+          "sticky mx-auto flex max-w-7xl items-center bg-transparent px-4 lg:px-8 py-0",
+          isMobile
+            ? "top-[10vh] h-[80vh] snap-start"
+            : "top-[50px] h-[50%]"
+        )}
       >
         <p
           className={
