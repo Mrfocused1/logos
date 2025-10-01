@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, FileText, Plus, Trash2, Copy, Check, Eye } from 'lucide-react';
-import { Button, GlassCard, Input, Modal, Toast } from '../components/ui';
+import { Button, GlassCard, Input, Modal, Toast, Squares } from '../components/ui';
 import type { InvoiceFormData } from '../types/invoice';
 import { DEFAULT_PAYMENT_TERMS } from '../types/invoice';
 import {
@@ -167,8 +167,19 @@ const InvoiceCreatePage: React.FC = () => {
   const { subtotal, taxAmount, total } = calculateTotals();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 px-4 py-12">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-white text-gray-900 relative overflow-hidden px-4 py-12">
+      {/* Animated Grid Background */}
+      <div className="fixed inset-0 z-0">
+        <Squares
+          direction="diagonal"
+          speed={0.3}
+          borderColor="rgba(0, 0, 0, 0.025)"
+          squareSize={40}
+          hoverFillColor="rgba(0, 0, 0, 0.015)"
+        />
+      </div>
+
+      <div className="max-w-4xl mx-auto relative z-10">
         {/* Back Button */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -179,7 +190,7 @@ const InvoiceCreatePage: React.FC = () => {
           <Button
             variant="ghost"
             onClick={() => navigate('/')}
-            className="gap-2"
+            className="gap-2 text-black hover:bg-black hover:text-white border border-black transition-all duration-300"
             aria-label="Go back to home"
           >
             <ArrowLeft size={20} />
@@ -195,14 +206,14 @@ const InvoiceCreatePage: React.FC = () => {
           className="mb-8"
         >
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-3 bg-primary/10 rounded-xl">
-              <FileText className="w-6 h-6 text-primary" />
+            <div className="p-3 bg-black/10 rounded-xl">
+              <FileText className="w-6 h-6 text-black" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold font-heading text-gray-900">
+              <h1 className="text-3xl font-bold font-heading text-black">
                 Create Invoice
               </h1>
-              <p className="text-gray-600">
+              <p className="text-gray-600 font-medium">
                 Generate a professional invoice for your client
               </p>
             </div>
@@ -218,8 +229,8 @@ const InvoiceCreatePage: React.FC = () => {
             className="lg:col-span-2 space-y-8"
           >
             {/* Client Information */}
-            <GlassCard className="p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Client Information</h2>
+            <GlassCard className="p-6 bg-white/90 backdrop-blur-sm border border-gray-200">
+              <h2 className="text-xl font-semibold text-black mb-4">Client Information</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input
                   label="Client Name"
@@ -268,8 +279,8 @@ const InvoiceCreatePage: React.FC = () => {
             </GlassCard>
 
             {/* Invoice Details */}
-            <GlassCard className="p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Invoice Details</h2>
+            <GlassCard className="p-6 bg-white/90 backdrop-blur-sm border border-gray-200">
+              <h2 className="text-xl font-semibold text-black mb-4">Invoice Details</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input
                   label="Due Date"
@@ -306,14 +317,14 @@ const InvoiceCreatePage: React.FC = () => {
             </GlassCard>
 
             {/* Invoice Items */}
-            <GlassCard className="p-6">
+            <GlassCard className="p-6 bg-white/90 backdrop-blur-sm border border-gray-200">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-gray-900">Invoice Items</h2>
+                <h2 className="text-xl font-semibold text-black">Invoice Items</h2>
                 <Button
                   variant="primary"
                   size="sm"
                   onClick={addItem}
-                  className="gap-2"
+                  className="gap-2 bg-black text-white hover:bg-white hover:text-black border border-black transition-all duration-300"
                 >
                   <Plus size={16} />
                   Add Item
@@ -367,7 +378,7 @@ const InvoiceCreatePage: React.FC = () => {
                         size="sm"
                         onClick={() => removeItem(index)}
                         disabled={formData.items.length === 1}
-                        className="text-red-500 hover:text-red-700 p-2"
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 transition-all duration-300"
                       >
                         <Trash2 size={16} />
                       </Button>
@@ -378,8 +389,8 @@ const InvoiceCreatePage: React.FC = () => {
             </GlassCard>
 
             {/* Additional Information */}
-            <GlassCard className="p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Additional Information</h2>
+            <GlassCard className="p-6 bg-white/90 backdrop-blur-sm border border-gray-200">
+              <h2 className="text-xl font-semibold text-black mb-4">Additional Information</h2>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Notes
@@ -403,8 +414,8 @@ const InvoiceCreatePage: React.FC = () => {
             className="space-y-6"
           >
             {/* Invoice Summary */}
-            <GlassCard className="p-6 sticky top-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Invoice Summary</h3>
+            <GlassCard className="p-6 sticky top-6 bg-white/90 backdrop-blur-sm border border-gray-200">
+              <h3 className="text-lg font-semibold text-black mb-4">Invoice Summary</h3>
 
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
@@ -417,8 +428,8 @@ const InvoiceCreatePage: React.FC = () => {
                 </div>
                 <div className="border-t border-gray-200 pt-3">
                   <div className="flex justify-between">
-                    <span className="font-semibold text-gray-900">Total:</span>
-                    <span className="font-bold text-xl text-primary">{formatCurrency(total)}</span>
+                    <span className="font-semibold text-black">Total:</span>
+                    <span className="font-bold text-xl text-black">{formatCurrency(total)}</span>
                   </div>
                 </div>
               </div>
@@ -426,7 +437,7 @@ const InvoiceCreatePage: React.FC = () => {
               <div className="mt-6 space-y-3">
                 <Button
                   variant="primary"
-                  className="w-full gap-2"
+                  className="w-full gap-2 bg-black text-white hover:bg-white hover:text-black border border-black transition-all duration-300"
                   onClick={handlePreview}
                 >
                   <Eye size={16} />
@@ -434,7 +445,7 @@ const InvoiceCreatePage: React.FC = () => {
                 </Button>
                 <Button
                   variant="secondary"
-                  className="w-full"
+                  className="w-full text-black border-black hover:bg-black hover:text-white transition-all duration-300"
                   onClick={handleCreateInvoice}
                 >
                   Create Invoice
@@ -456,7 +467,7 @@ const InvoiceCreatePage: React.FC = () => {
                       variant="ghost"
                       size="sm"
                       onClick={copyInvoiceUrl}
-                      className="gap-2"
+                      className="gap-2 text-black hover:bg-black hover:text-white transition-all duration-300"
                     >
                       {copySuccess ? <Check size={16} /> : <Copy size={16} />}
                       {copySuccess ? 'Copied!' : 'Copy URL'}
@@ -484,8 +495,8 @@ const InvoiceCreatePage: React.FC = () => {
                   <p className="text-gray-600">#{generatedInvoice.invoiceNumber}</p>
                 </div>
                 <div className="text-right">
-                  <h2 className="text-lg font-bold text-primary">BOLA LOGOS</h2>
-                  <p className="text-sm text-gray-600">Inspiring Visual Storytelling</p>
+                  <h2 className="text-lg font-bold text-black">BOLA LOGOS</h2>
+                  <p className="text-sm text-gray-600 font-medium">Inspiring Visual Storytelling</p>
                 </div>
               </div>
 
@@ -547,8 +558,8 @@ const InvoiceCreatePage: React.FC = () => {
                   </div>
                   <div className="border-t border-gray-200 pt-2">
                     <div className="flex justify-between">
-                      <span className="font-semibold text-gray-900">Total:</span>
-                      <span className="font-bold text-xl text-primary">{formatCurrency(generatedInvoice.total)}</span>
+                      <span className="font-semibold text-black">Total:</span>
+                      <span className="font-bold text-xl text-black">{formatCurrency(generatedInvoice.total)}</span>
                     </div>
                   </div>
                 </div>
