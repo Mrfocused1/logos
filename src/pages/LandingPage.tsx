@@ -36,8 +36,8 @@ const LandingPage: React.FC = () => {
   };
 
   const handlePayNow = () => {
-    // Open Stripe payment link in new tab
-    window.open('https://buy.stripe.com/cNiaEY1oCaDA5i002k63K0n', '_blank');
+    // Open Stripe payment link in same window
+    window.location.href = 'https://buy.stripe.com/cNiaEY1oCaDA5i002k63K0n';
   };
 
   const clientAvatars = [

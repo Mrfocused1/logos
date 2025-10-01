@@ -19,7 +19,7 @@ import { cn } from "../../utils/cn";
 import { Button, type ButtonProps } from "./Button";
 
 const DRAG_CONSTRAINTS = { left: 0, right: 310 };
-const DRAG_THRESHOLD = 0.9;
+const DRAG_THRESHOLD = 0.75;
 
 const BUTTON_STATES = {
   initial: { width: "24rem" },
@@ -176,7 +176,7 @@ const SlideButton = forwardRef<HTMLButtonElement, SlideButtonProps>(
             const newX = (newProgress / 100) * DRAG_CONSTRAINTS.right;
             dragX.set(newX);
 
-            if (newProgress >= 90) {
+            if (newProgress >= 75) {
               setCompleted(true);
               handleSubmit();
               onSlideComplete?.();
