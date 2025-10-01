@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion, LayoutGroup } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, LayoutGroup, useInView } from 'framer-motion';
 import { CheckCircle, Palette, Users, CreditCard, FileText, BookOpen } from 'lucide-react';
 import {
   SlideButton,
@@ -34,6 +34,24 @@ const LandingPage: React.FC = () => {
       y: 0,
       transition: { duration: 0.8, ease: "easeOut" }
     },
+  };
+
+  // Simple counter component
+  const SimpleCounter = ({ target, suffix = "" }: { target: number; suffix?: string }) => {
+    const [count, setCount] = useState(0);
+    const ref = useRef<HTMLSpanElement>(null);
+    const isInView = useInView(ref, { once: true });
+
+    useEffect(() => {
+      if (isInView && count < target) {
+        const timer = setTimeout(() => {
+          setCount(prev => Math.min(prev + 1, target));
+        }, 30);
+        return () => clearTimeout(timer);
+      }
+    }, [isInView, count, target]);
+
+    return <span ref={ref}>{count}{suffix}</span>;
   };
 
   const handlePayNow = () => {
@@ -203,13 +221,13 @@ const LandingPage: React.FC = () => {
           >
             <div className="text-center flex-1 min-w-0">
               <div className="text-xl sm:text-2xl font-bold text-gray-900 whitespace-nowrap">
-                <AnimatedCounter value={70} suffix="+" />
+                <SimpleCounter target={70} suffix="+" />
               </div>
               <div className="text-xs sm:text-sm text-gray-600 leading-tight">Happy Clients</div>
             </div>
             <div className="text-center flex-1 min-w-0">
               <div className="text-xl sm:text-2xl font-bold text-gray-900">
-                <AnimatedCounter value={90} suffix="+" />
+                <SimpleCounter target={90} suffix="+" />
               </div>
               <div className="text-xs sm:text-sm text-gray-600 leading-tight">Projects</div>
             </div>
