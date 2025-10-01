@@ -238,21 +238,21 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmit, className })
         />
       </div>
 
-      <div className="flex gap-4">
+      <div className="flex gap-2 sm:gap-4">
         <Button
           type="button"
           onClick={() => setShowForm(false)}
           variant="secondary"
-          size="lg"
-          className="flex-1"
+          size="sm"
+          className="flex-1 sm:size-lg py-2 sm:py-3 text-sm sm:text-base"
         >
           Cancel
         </Button>
         <Button
           type="submit"
           variant="primary"
-          size="lg"
-          className="flex-1 bg-black text-white hover:bg-gray-800 hover:text-white"
+          size="sm"
+          className="flex-1 sm:size-lg py-2 sm:py-3 text-sm sm:text-base bg-black text-white hover:bg-gray-800 hover:text-white"
         >
           Send Message
         </Button>

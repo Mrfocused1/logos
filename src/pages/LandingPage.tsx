@@ -36,7 +36,14 @@ const LandingPage: React.FC = () => {
   };
 
   const handlePayNow = () => {
-    window.location.href = '/invoice/create';
+    // Scroll to contact section
+    const contactSection = document.getElementById('contact');
+    if (contactSection) {
+      contactSection.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
   };
 
   const clientAvatars = [
@@ -118,9 +125,9 @@ const LandingPage: React.FC = () => {
         <Squares
           direction="diagonal"
           speed={0.3}
-          borderColor="rgba(0, 0, 0, 0.02)"
-          squareSize={60}
-          hoverFillColor="rgba(0, 0, 0, 0.01)"
+          borderColor="rgba(0, 0, 0, 0.008)"
+          squareSize={40}
+          hoverFillColor="rgba(0, 0, 0, 0.005)"
         />
       </div>
 
@@ -196,31 +203,25 @@ const LandingPage: React.FC = () => {
           {/* Stats Row */}
           <motion.div
             variants={itemVariants}
-            className="grid grid-cols-3 gap-2 sm:gap-4 max-w-3xl mx-auto mb-4"
+            className="flex justify-center items-center space-x-4 sm:space-x-8 max-w-full mx-auto mb-4 px-4"
           >
-            <div className="text-center p-2 sm:p-6">
-              <div className="flex flex-col items-center">
-                <div className="text-lg sm:text-2xl font-bold text-gray-900">
-                  <AnimatedCounter value={100} suffix="+" />
-                </div>
-                <div className="text-xs sm:text-sm text-gray-600">Happy Clients</div>
+            <div className="text-center flex-1">
+              <div className="text-lg sm:text-2xl font-bold text-gray-900">
+                100+
               </div>
+              <div className="text-xs sm:text-sm text-gray-600">Happy Clients</div>
             </div>
-            <div className="text-center p-2 sm:p-6">
-              <div className="flex flex-col items-center">
-                <div className="text-lg sm:text-2xl font-bold text-gray-900">
-                  <AnimatedCounter value={5} suffix="" />
-                </div>
-                <div className="text-xs sm:text-sm text-gray-600">Design Versions</div>
+            <div className="text-center flex-1">
+              <div className="text-lg sm:text-2xl font-bold text-gray-900">
+                5
               </div>
+              <div className="text-xs sm:text-sm text-gray-600">Design Versions</div>
             </div>
-            <div className="text-center p-2 sm:p-6">
-              <div className="flex flex-col items-center">
-                <div className="text-lg sm:text-2xl font-bold text-gray-900">
-                  <AnimatedCounter value={3} suffix="" />
-                </div>
-                <div className="text-xs sm:text-sm text-gray-600">Revisions</div>
+            <div className="text-center flex-1">
+              <div className="text-lg sm:text-2xl font-bold text-gray-900">
+                3
               </div>
+              <div className="text-xs sm:text-sm text-gray-600">Revisions</div>
             </div>
           </motion.div>
 
@@ -303,7 +304,7 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* Contact Section */}
-      <section className="relative px-4 py-16 sm:py-24 overflow-hidden z-10">
+      <section id="contact" className="relative px-4 py-16 sm:py-24 overflow-hidden z-10">
         <div className="max-w-4xl mx-auto relative z-10">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
