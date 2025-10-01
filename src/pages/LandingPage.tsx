@@ -176,10 +176,10 @@ const LandingPage: React.FC = () => {
                 />
               </motion.h1>
             </LayoutGroup>
-            <p className="text-xl sm:text-2xl text-gray-600 mb-4 max-w-3xl mx-auto font-medium">
+            <p className="text-xl sm:text-2xl text-black mb-4 max-w-3xl mx-auto font-bold">
               Inspiring Visual Storytelling
             </p>
-            <p className="text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg text-black max-w-2xl mx-auto leading-relaxed font-bold">
               Transforming ideas into compelling visual narratives that captivate and inspire
             </p>
           </motion.div>
@@ -224,7 +224,7 @@ const LandingPage: React.FC = () => {
             variants={itemVariants}
             className="mt-8 mb-1 sm:mb-4"
           >
-            <p className="text-lg text-gray-600 mb-4">Popular clients</p>
+            <p className="text-lg text-black mb-4 font-bold">Popular clients</p>
             <AvatarGroup
               items={clientAvatars}
               maxVisible={5}
@@ -266,7 +266,7 @@ const LandingPage: React.FC = () => {
             </motion.div>
             <motion.p
               variants={itemVariants}
-              className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto mb-12"
+              className="text-lg sm:text-xl text-black max-w-2xl mx-auto mb-12 font-bold"
             >
               Comprehensive graphic design solutions tailored to elevate your brand
             </motion.p>
