@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import AdminSidebar from './AdminSidebar';
 import { Menu } from 'lucide-react';
-import { Button } from '../ui';
+import { Button, Squares } from '../ui';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -14,7 +14,18 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
+    <div className="min-h-screen bg-white relative">
+      {/* Animated Grid Background - covers entire admin area */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <Squares
+          direction="diagonal"
+          speed={0.3}
+          borderColor="rgba(0, 0, 0, 0.025)"
+          squareSize={40}
+          hoverFillColor="rgba(0, 0, 0, 0.015)"
+        />
+      </div>
+
       {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
         <div
@@ -30,26 +41,23 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       />
 
       {/* Main content */}
-      <div className="lg:ml-64 flex flex-col min-h-screen">
+      <div className="lg:ml-64 flex flex-col min-h-screen relative z-10">
         {/* Mobile header */}
-        <div className="lg:hidden bg-white/10 backdrop-blur-sm border-b border-white/20 p-4">
+        <div className="lg:hidden bg-white/90 backdrop-blur-sm border-b border-gray-200 p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setSidebarOpen(true)}
-                className="p-2"
+                className="p-2 text-black hover:bg-black hover:text-white"
               >
                 <Menu size={20} />
                 <span className="sr-only">Open sidebar</span>
               </Button>
-              <h1 className="text-lg font-semibold font-heading text-gray-900">
+              <h1 className="text-lg font-semibold font-heading text-black">
                 BOLA LOGOS Admin
               </h1>
-            </div>
-            <div className="text-sm text-gray-600">
-              {user?.username}
             </div>
           </div>
         </div>
@@ -62,14 +70,14 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         </main>
 
         {/* Footer */}
-        <footer className="p-6 lg:p-8 border-t border-white/20">
+        <footer className="p-6 lg:p-8 border-t border-gray-200">
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
               <p className="text-sm text-gray-600">
                 © 2025 BOLA LOGOS. All rights reserved.
               </p>
               <p className="text-sm text-gray-500">
-                Admin Dashboard v1.0
+                Inspiring Visual Storytelling
               </p>
             </div>
           </div>

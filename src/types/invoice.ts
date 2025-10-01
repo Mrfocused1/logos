@@ -34,6 +34,7 @@ export interface InvoiceData {
   // Additional Information
   notes?: string;
   paymentTerms?: string;
+  paymentLink?: string;
 
   // Metadata
   createdAt: string;
@@ -46,6 +47,7 @@ export interface InvoiceFormData {
   clientEmail: string;
   clientAddress?: string;
   clientPhone?: string;
+  paymentLink?: string;
   customSlug?: string;
   dueDate: string;
   items: Omit<InvoiceItem, 'id' | 'total'>[];

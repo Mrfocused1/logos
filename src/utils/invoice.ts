@@ -107,6 +107,7 @@ export const createInvoiceFromForm = (
     total,
     notes: formData.notes,
     paymentTerms: formData.paymentTerms,
+    paymentLink: formData.paymentLink,
     createdAt: now,
     updatedAt: now,
     createdBy: userId

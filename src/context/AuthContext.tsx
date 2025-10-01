@@ -1,16 +1,20 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
+import { supabase } from '../lib/supabase';
+import type { User as SupabaseUser } from '@supabase/supabase-js';
 
 interface User {
   id: string;
   username: string;
+  email: string;
   role: 'admin';
 }
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  signup: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   loading: boolean;
 }
@@ -27,89 +31,115 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Check for existing session on app load
   useEffect(() => {
-    const checkSession = () => {
+    const checkSession = async () => {
       try {
-        const token = localStorage.getItem('admin_token');
-        const userData = localStorage.getItem('admin_user');
+        const { data: { session } } = await supabase.auth.getSession();
 
-        if (token && userData) {
-          const parsedUser = JSON.parse(userData);
-          const tokenData = JSON.parse(atob(token.split('.')[1])); // Decode JWT-like token
-
-          // Check if token is expired (24 hours)
-          if (tokenData.exp > Date.now()) {
-            setUser(parsedUser);
-          } else {
-            // Token expired, clear storage
-            localStorage.removeItem('admin_token');
-            localStorage.removeItem('admin_user');
-          }
+        if (session?.user) {
+          const userData: User = {
+            id: session.user.id,
+            username: session.user.email?.split('@')[0] || 'admin',
+            email: session.user.email || '',
+            role: 'admin',
+          };
+          setUser(userData);
         }
       } catch (error) {
         console.error('Session check failed:', error);
-        // Clear corrupted data
-        localStorage.removeItem('admin_token');
-        localStorage.removeItem('admin_user');
       } finally {
         setLoading(false);
       }
     };
 
     checkSession();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_IN' && session?.user) {
+          const userData: User = {
+            id: session.user.id,
+            username: session.user.email?.split('@')[0] || 'admin',
+            email: session.user.email || '',
+            role: 'admin',
+          };
+          setUser(userData);
+        } else if (event === 'SIGNED_OUT') {
+          setUser(null);
+        }
+        setLoading(false);
+      }
+    );
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  const login = async (username: string, password: string): Promise<{ success: boolean; error?: string }> => {
+  const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     setLoading(true);
 
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-      // Hardcoded credentials from environment variables
-      const validUsername = import.meta.env.VITE_ADMIN_USERNAME || 'admin';
-      const validPassword = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123';
+      if (error) {
+        setLoading(false);
+        return { success: false, error: error.message };
+      }
 
-      if (username === validUsername && password === validPassword) {
+      if (data.user) {
         const userData: User = {
-          id: 'admin_1',
-          username: validUsername,
+          id: data.user.id,
+          username: data.user.email?.split('@')[0] || 'admin',
+          email: data.user.email || '',
           role: 'admin',
         };
-
-        // Create a simple JWT-like token
-        const tokenData = {
-          userId: userData.id,
-          username: userData.username,
-          role: userData.role,
-          iat: Date.now(),
-          exp: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
-        };
-
-        const token = btoa(JSON.stringify({ header: 'fake' })) + '.' +
-                     btoa(JSON.stringify(tokenData)) + '.' +
-                     btoa(JSON.stringify({ signature: 'fake' }));
-
-        // Store in localStorage
-        localStorage.setItem('admin_token', token);
-        localStorage.setItem('admin_user', JSON.stringify(userData));
-
         setUser(userData);
-        setLoading(false);
-
-        return { success: true };
-      } else {
-        setLoading(false);
-        return { success: false, error: 'Invalid username or password' };
       }
+
+      setLoading(false);
+      return { success: true };
     } catch (error) {
       setLoading(false);
       return { success: false, error: 'Login failed. Please try again.' };
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('admin_token');
-    localStorage.removeItem('admin_user');
+  const signup = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
+    setLoading(true);
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (error) {
+        setLoading(false);
+        return { success: false, error: error.message };
+      }
+
+      if (data.user) {
+        const userData: User = {
+          id: data.user.id,
+          username: data.user.email?.split('@')[0] || 'admin',
+          email: data.user.email || '',
+          role: 'admin',
+        };
+        setUser(userData);
+      }
+
+      setLoading(false);
+      return { success: true };
+    } catch (error) {
+      setLoading(false);
+      return { success: false, error: 'Signup failed. Please try again.' };
+    }
+  };
+
+  const logout = async () => {
+    await supabase.auth.signOut();
     setUser(null);
   };
 
@@ -117,6 +147,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     user,
     isAuthenticated: !!user,
     login,
+    signup,
     logout,
     loading,
   };

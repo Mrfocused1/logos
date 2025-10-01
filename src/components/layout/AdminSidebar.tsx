@@ -4,7 +4,6 @@ import { useAuth } from '../../context/AuthContext';
 import { Button, GlassCard } from '../ui';
 import {
   LayoutDashboard,
-  Users,
   FileText,
   LogOut,
   Sparkles,
@@ -27,11 +26,6 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen, onClose }) => {
       icon: LayoutDashboard,
     },
     {
-      name: 'Testimonials',
-      href: '/admin/testimonials',
-      icon: Users,
-    },
-    {
       name: 'Invoices',
       href: '/admin/invoices',
       icon: FileText,
@@ -52,16 +46,16 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen, onClose }) => {
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         lg:translate-x-0 lg:static lg:inset-0
       `}>
-        <GlassCard variant="strong" className="h-full rounded-none lg:rounded-r-3xl flex flex-col">
+        <GlassCard variant="strong" className="h-full rounded-none lg:rounded-r-3xl flex flex-col bg-white/80 backdrop-blur-md border border-gray-200/50">
           {/* Header */}
-          <div className="p-6 border-b border-white/20">
+          <div className="p-6 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center">
-                  <Sparkles className="w-6 h-6 text-primary" />
+                <div className="w-10 h-10 bg-black/10 rounded-xl flex items-center justify-center">
+                  <Sparkles className="w-6 h-6 text-black" />
                 </div>
                 <div>
-                  <h2 className="font-bold font-heading text-gray-900">
+                  <h2 className="font-bold font-heading text-black">
                     BOLA LOGOS
                   </h2>
                   <p className="text-xs text-gray-600">Admin Panel</p>
@@ -73,7 +67,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen, onClose }) => {
                 variant="ghost"
                 size="sm"
                 onClick={onClose}
-                className="lg:hidden p-2"
+                className="lg:hidden p-2 text-black hover:bg-black hover:text-white"
               >
                 <X size={20} />
                 <span className="sr-only">Close sidebar</span>
@@ -94,8 +88,8 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen, onClose }) => {
                       className={({ isActive }) =>
                         `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
                           isActive
-                            ? 'bg-primary/10 text-primary border-l-4 border-primary'
-                            : 'text-gray-700 hover:bg-white/10 hover:text-primary'
+                            ? 'bg-black/10 text-black border-l-4 border-black'
+                            : 'text-gray-700 hover:bg-black/5 hover:text-black'
                         }`
                       }
                     >
@@ -109,17 +103,17 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen, onClose }) => {
           </nav>
 
           {/* User info and logout */}
-          <div className="p-6 border-t border-white/20">
+          <div className="p-6 border-t border-gray-200">
             {/* User info */}
-            <div className="mb-4 p-3 bg-white/5 rounded-xl">
+            <div className="mb-4 p-3 bg-black/5 rounded-xl">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
-                  <span className="text-sm font-semibold text-primary">
+                <div className="w-8 h-8 bg-black/10 rounded-full flex items-center justify-center">
+                  <span className="text-sm font-semibold text-black">
                     {user?.username.charAt(0).toUpperCase()}
                   </span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">
+                  <p className="text-sm font-medium text-black truncate">
                     {user?.username}
                   </p>
                   <p className="text-xs text-gray-600 capitalize">
@@ -134,7 +128,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen, onClose }) => {
               variant="ghost"
               size="sm"
               onClick={handleLogout}
-              className="w-full justify-start gap-3 text-gray-700 hover:text-error hover:bg-error/10"
+              className="w-full justify-start gap-3 text-gray-700 hover:text-red-600 hover:bg-red-50"
             >
               <LogOut size={20} />
               Sign Out

@@ -19,7 +19,7 @@ import {
   AlertCircle,
   XCircle
 } from 'lucide-react';
-import { Button, GlassCard, Input } from '../../components/ui';
+import { Button, GlassCard, Input, Squares, InteractiveHoverButton } from '../../components/ui';
 import type { InvoiceData } from '../../types/invoice';
 import { formatCurrency, formatDate, isOverdue, generateInvoiceUrl } from '../../utils/invoice';
 import { INVOICE_STATUS_COLORS } from '../../types/invoice';
@@ -168,125 +168,168 @@ const InvoicesPage: React.FC = () => {
     // In real app, show toast notification
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: "easeOut" }
+    },
+  };
+
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold font-heading text-gray-900">Invoices</h1>
-          <p className="text-gray-600">Manage and track your client invoices</p>
-        </div>
-        <Button
-          variant="primary"
-          onClick={() => navigate('/invoice/create')}
-          className="gap-2"
+    <div className="relative">
+      {/* Animated Grid Background - positioned to cover the admin content area */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <Squares
+          direction="diagonal"
+          speed={0.3}
+          borderColor="rgba(0, 0, 0, 0.025)"
+          squareSize={40}
+          hoverFillColor="rgba(0, 0, 0, 0.015)"
+        />
+      </div>
+
+      <div className="relative z-10">
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
         >
-          <Plus size={20} />
-          Create Invoice
-        </Button>
-      </div>
-
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <GlassCard className="p-6">
-          <div className="flex items-center justify-between">
+          {/* Header */}
+          <motion.div
+            variants={itemVariants}
+            className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6"
+          >
             <div>
-              <p className="text-sm font-medium text-gray-600 mb-1">Total Invoices</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+              <h1 className="text-3xl sm:text-4xl font-bold font-heading text-black mb-1">INVOICES</h1>
+              <p className="text-lg text-black font-bold">Manage and track your client invoices</p>
             </div>
-            <div className="p-3 rounded-xl bg-primary/10">
-              <FileText className="w-6 h-6 text-primary" />
-            </div>
-          </div>
-        </GlassCard>
-
-        <GlassCard className="p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600 mb-1">Paid Invoices</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.paid}</p>
-            </div>
-            <div className="p-3 rounded-xl bg-green-100">
-              <CheckCircle className="w-6 h-6 text-green-600" />
-            </div>
-          </div>
-        </GlassCard>
-
-        <GlassCard className="p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600 mb-1">Total Revenue</p>
-              <p className="text-2xl font-bold text-gray-900">{formatCurrency(stats.totalAmount)}</p>
-            </div>
-            <div className="p-3 rounded-xl bg-blue-100">
-              <DollarSign className="w-6 h-6 text-blue-600" />
-            </div>
-          </div>
-        </GlassCard>
-
-        <GlassCard className="p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600 mb-1">Paid Revenue</p>
-              <p className="text-2xl font-bold text-gray-900">{formatCurrency(stats.paidAmount)}</p>
-            </div>
-            <div className="p-3 rounded-xl bg-green-100">
-              <CheckCircle className="w-6 h-6 text-green-600" />
-            </div>
-          </div>
-        </GlassCard>
-      </div>
-
-      {/* Filters and Search */}
-      <GlassCard className="p-6">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex-1">
-            <Input
-              placeholder="Search invoices..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              icon={<Search size={20} />}
+            <InteractiveHoverButton
+              text="Create Invoice"
+              onClick={() => navigate('/invoice/create')}
+              className="w-48 h-12 text-black border-black"
             />
-          </div>
+          </motion.div>
 
-          <div className="flex gap-3">
-            <select
-              className="px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-            >
-              <option value="all">All Status</option>
-              <option value="draft">Draft</option>
-              <option value="sent">Sent</option>
-              <option value="paid">Paid</option>
-              <option value="overdue">Overdue</option>
-            </select>
+          {/* Stats Grid */}
+          <motion.div
+            variants={itemVariants}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6"
+          >
+            <GlassCard className="p-6 bg-white/90 backdrop-blur-sm border border-gray-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600 mb-1">Total Invoices</p>
+                  <p className="text-2xl font-bold text-black">{stats.total}</p>
+                </div>
+                <div className="p-3 rounded-xl bg-black/10">
+                  <FileText className="w-6 h-6 text-black" />
+                </div>
+              </div>
+            </GlassCard>
 
-            <select
-              className="px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as 'date' | 'amount' | 'client')}
-            >
-              <option value="date">Sort by Date</option>
-              <option value="amount">Sort by Amount</option>
-              <option value="client">Sort by Client</option>
-            </select>
-          </div>
-        </div>
-      </GlassCard>
+            <GlassCard className="p-6 bg-white/90 backdrop-blur-sm border border-gray-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600 mb-1">Paid Invoices</p>
+                  <p className="text-2xl font-bold text-black">{stats.paid}</p>
+                </div>
+                <div className="p-3 rounded-xl bg-green-100">
+                  <CheckCircle className="w-6 h-6 text-green-600" />
+                </div>
+              </div>
+            </GlassCard>
 
-      {/* Invoices Table */}
-      <GlassCard className="overflow-hidden">
+            <GlassCard className="p-6 bg-white/90 backdrop-blur-sm border border-gray-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600 mb-1">Total Revenue</p>
+                  <p className="text-2xl font-bold text-black">{formatCurrency(stats.totalAmount)}</p>
+                </div>
+                <div className="p-3 rounded-xl bg-black/10">
+                  <DollarSign className="w-6 h-6 text-black" />
+                </div>
+              </div>
+            </GlassCard>
+
+            <GlassCard className="p-6 bg-white/90 backdrop-blur-sm border border-gray-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600 mb-1">Paid Revenue</p>
+                  <p className="text-2xl font-bold text-black">{formatCurrency(stats.paidAmount)}</p>
+                </div>
+                <div className="p-3 rounded-xl bg-green-100">
+                  <CheckCircle className="w-6 h-6 text-green-600" />
+                </div>
+              </div>
+            </GlassCard>
+          </motion.div>
+
+          {/* Filters and Search */}
+          <motion.div variants={itemVariants}>
+            <GlassCard className="p-6 bg-white/90 backdrop-blur-sm border border-gray-200 mb-6">
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex-1">
+                  <Input
+                    placeholder="Search invoices..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    icon={<Search size={20} />}
+                  />
+                </div>
+
+                <div className="flex gap-3">
+                  <select
+                    className="px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent"
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                  >
+                    <option value="all">All Status</option>
+                    <option value="draft">Draft</option>
+                    <option value="sent">Sent</option>
+                    <option value="paid">Paid</option>
+                    <option value="overdue">Overdue</option>
+                  </select>
+
+                  <select
+                    className="px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent"
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as 'date' | 'amount' | 'client')}
+                  >
+                    <option value="date">Sort by Date</option>
+                    <option value="amount">Sort by Amount</option>
+                    <option value="client">Sort by Client</option>
+                  </select>
+                </div>
+              </div>
+            </GlassCard>
+          </motion.div>
+
+          {/* Invoices Table */}
+          <motion.div variants={itemVariants}>
+            <GlassCard className="overflow-hidden bg-white/90 backdrop-blur-sm border border-gray-200">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50/50">
+            <thead className="bg-black/5">
               <tr>
-                <th className="text-left py-4 px-6 text-sm font-medium text-gray-900">Invoice</th>
-                <th className="text-left py-4 px-6 text-sm font-medium text-gray-900">Client</th>
-                <th className="text-left py-4 px-6 text-sm font-medium text-gray-900">Status</th>
-                <th className="text-left py-4 px-6 text-sm font-medium text-gray-900">Amount</th>
-                <th className="text-left py-4 px-6 text-sm font-medium text-gray-900">Due Date</th>
-                <th className="text-right py-4 px-6 text-sm font-medium text-gray-900">Actions</th>
+                <th className="text-left py-4 px-6 text-sm font-medium text-black">Invoice</th>
+                <th className="text-left py-4 px-6 text-sm font-medium text-black">Client</th>
+                <th className="text-left py-4 px-6 text-sm font-medium text-black">Status</th>
+                <th className="text-left py-4 px-6 text-sm font-medium text-black">Amount</th>
+                <th className="text-left py-4 px-6 text-sm font-medium text-black">Due Date</th>
+                <th className="text-right py-4 px-6 text-sm font-medium text-black">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -303,14 +346,14 @@ const InvoicesPage: React.FC = () => {
                   >
                     <td className="py-4 px-6">
                       <div>
-                        <p className="font-medium text-gray-900">{invoice.invoiceNumber}</p>
+                        <p className="font-medium text-black">{invoice.invoiceNumber}</p>
                         <p className="text-sm text-gray-500">{formatDate(invoice.issueDate)}</p>
                       </div>
                     </td>
 
                     <td className="py-4 px-6">
                       <div>
-                        <p className="font-medium text-gray-900">{invoice.clientName}</p>
+                        <p className="font-medium text-black">{invoice.clientName}</p>
                         <p className="text-sm text-gray-500">{invoice.clientEmail}</p>
                       </div>
                     </td>
@@ -327,7 +370,7 @@ const InvoicesPage: React.FC = () => {
                     </td>
 
                     <td className="py-4 px-6">
-                      <p className="font-medium text-gray-900">{formatCurrency(invoice.total)}</p>
+                      <p className="font-medium text-black">{formatCurrency(invoice.total)}</p>
                     </td>
 
                     <td className="py-4 px-6">
@@ -378,7 +421,7 @@ const InvoicesPage: React.FC = () => {
         {filteredInvoices.length === 0 && (
           <div className="text-center py-12">
             <FileText size={48} className="mx-auto text-gray-400 mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No invoices found</h3>
+            <h3 className="text-lg font-medium text-black mb-2">No invoices found</h3>
             <p className="text-gray-600 mb-6">
               {searchTerm || statusFilter !== 'all'
                 ? 'Try adjusting your search or filter criteria.'
@@ -386,18 +429,18 @@ const InvoicesPage: React.FC = () => {
               }
             </p>
             {!searchTerm && statusFilter === 'all' && (
-              <Button
-                variant="primary"
+              <InteractiveHoverButton
+                text="Create First Invoice"
                 onClick={() => navigate('/invoice/create')}
-                className="gap-2"
-              >
-                <Plus size={16} />
-                Create First Invoice
-              </Button>
+                className="w-48 h-12 text-black border-black"
+              />
             )}
           </div>
         )}
-      </GlassCard>
+            </GlassCard>
+          </motion.div>
+        </motion.div>
+      </div>
     </div>
   );
 };

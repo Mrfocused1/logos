@@ -6,6 +6,13 @@ import DashboardPage from './pages/admin/DashboardPage';
 import LandingPage from './pages/LandingPage';
 import InvoiceCreatePage from './pages/InvoiceCreatePage';
 import InvoiceViewPage from './pages/InvoiceViewPage';
+// Temporary import for admin user creation - remove after setup
+import { createAdminUser } from './utils/createAdmin';
+
+// Make createAdminUser available globally for development
+if (import.meta.env.DEV) {
+  (window as any).createAdminUser = createAdminUser;
+}
 
 function App() {
   return (

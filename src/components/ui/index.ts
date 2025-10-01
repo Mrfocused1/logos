@@ -17,5 +17,6 @@ export { BlurredStagger } from './BlurredStagger';
 export { TypewriterEffect } from './TypewriterEffect';
 export { ServicesColumn } from './ServicesColumn';
 export { ContactForm } from './ContactForm';
+export { Menu, MenuItem, MenuContainer } from './AdminMenu';
 
 export type { ToastProps } from './Toast';

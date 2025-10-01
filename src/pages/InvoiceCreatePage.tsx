@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, FileText, Plus, Trash2, Copy, Check, Eye } from 'lucide-react';
-import { Button, GlassCard, Input, Modal, Toast, Squares } from '../components/ui';
+import { ArrowLeft, FileText, Plus, Trash2, Copy, Check } from 'lucide-react';
+import { Button, GlassCard, Input, Toast, Squares } from '../components/ui';
 import type { InvoiceFormData } from '../types/invoice';
 import { DEFAULT_PAYMENT_TERMS } from '../types/invoice';
 import {
@@ -22,6 +22,7 @@ const InvoiceCreatePage: React.FC = () => {
     clientEmail: '',
     clientAddress: '',
     clientPhone: '',
+    paymentLink: '',
     customSlug: '',
     dueDate: calculateDueDate(30),
     items: [{ description: '', quantity: 1, unitPrice: 0 }],
@@ -31,7 +32,6 @@ const InvoiceCreatePage: React.FC = () => {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [showPreview, setShowPreview] = useState(false);
   const [generatedInvoice, setGeneratedInvoice] = useState<any>(null);
   const [copySuccess, setCopySuccess] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
@@ -118,16 +118,6 @@ const InvoiceCreatePage: React.FC = () => {
     return { subtotal, taxAmount, total };
   };
 
-  const handlePreview = () => {
-    if (!validateForm()) {
-      showToast('Please fix the errors before previewing');
-      return;
-    }
-
-    const invoice = createInvoiceFromForm(formData, 'admin');
-    setGeneratedInvoice(invoice);
-    setShowPreview(true);
-  };
 
   const handleCreateInvoice = () => {
     if (!validateForm()) {
@@ -138,14 +128,15 @@ const InvoiceCreatePage: React.FC = () => {
     const invoice = createInvoiceFromForm(formData, 'admin');
     const invoiceUrl = generateInvoiceUrl(invoice.customSlug!);
 
-    // In a real app, you would save to database here
+    // Store invoice data (in a real app, you would save to database here)
+    localStorage.setItem(`invoice-${invoice.customSlug}`, JSON.stringify(invoice));
     console.log('Invoice created:', invoice);
 
     showToast('Invoice created successfully!');
     setGeneratedInvoice(invoice);
 
-    // Navigate to invoice view (we'll create this component next)
-    // navigate(`/invoice/${invoice.customSlug}`);
+    // Navigate to invoice view
+    navigate(`/invoice/${invoice.customSlug}`);
   };
 
   const copyInvoiceUrl = () => {
@@ -235,6 +226,14 @@ const InvoiceCreatePage: React.FC = () => {
                   required
                 />
                 <Input
+                  label="Payment Link"
+                  placeholder="https://payment-link.com"
+                  value={formData.paymentLink}
+                  onChange={(e) => setFormData(prev => ({ ...prev, paymentLink: e.target.value }))}
+                  error={errors.paymentLink}
+                  helperText="Optional: Payment link for the client"
+                />
+                <Input
                   label="Custom URL Slug"
                   placeholder="my-client-invoice"
                   value={formData.customSlug}
@@ -250,7 +249,7 @@ const InvoiceCreatePage: React.FC = () => {
               <h2 className="text-xl font-semibold text-black mb-4">Invoice Details</h2>
               <div className="grid grid-cols-1 gap-4">
                 <Input
-                  label="Due Date"
+                  label="Date"
                   type="date"
                   value={formData.dueDate}
                   onChange={(e) => setFormData(prev => ({ ...prev, dueDate: e.target.value }))}
@@ -374,18 +373,10 @@ const InvoiceCreatePage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="mt-6 space-y-3">
+              <div className="mt-6">
                 <Button
                   variant="primary"
                   className="w-full gap-2 bg-black text-white hover:bg-white hover:text-black border border-black transition-all duration-300"
-                  onClick={handlePreview}
-                >
-                  <Eye size={16} />
-                  Preview Invoice
-                </Button>
-                <Button
-                  variant="secondary"
-                  className="w-full text-black border-black hover:bg-black hover:text-white transition-all duration-300"
                   onClick={handleCreateInvoice}
                 >
                   Create Invoice
@@ -419,94 +410,6 @@ const InvoiceCreatePage: React.FC = () => {
           </motion.div>
         </div>
 
-        {/* Preview Modal */}
-        {showPreview && generatedInvoice && (
-          <Modal
-            isOpen={showPreview}
-            onClose={() => setShowPreview(false)}
-            title="Invoice Preview"
-            size="lg"
-          >
-            <div className="space-y-6">
-              {/* Invoice Header */}
-              <div className="flex justify-between items-start">
-                <div>
-                  <h1 className="text-2xl font-bold text-gray-900">INVOICE</h1>
-                  <p className="text-gray-600">#{generatedInvoice.invoiceNumber}</p>
-                </div>
-                <div className="text-right">
-                  <h2 className="text-lg font-bold text-black">BOLA LOGOS</h2>
-                  <p className="text-sm text-gray-600 font-medium">Inspiring Visual Storytelling</p>
-                </div>
-              </div>
-
-              {/* Client Info */}
-              <div className="grid grid-cols-2 gap-8">
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-2">Bill To:</h3>
-                  <div className="text-sm text-gray-600">
-                    <p className="font-medium">{generatedInvoice.clientName}</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-sm text-gray-600">
-                    <p><span className="font-medium">Issue Date:</span> {new Date(generatedInvoice.issueDate).toLocaleDateString()}</p>
-                    <p><span className="font-medium">Due Date:</span> {new Date(generatedInvoice.dueDate).toLocaleDateString()}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Items Table */}
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-gray-200">
-                      <th className="text-left py-2 text-sm font-medium text-gray-900">Description</th>
-                      <th className="text-right py-2 text-sm font-medium text-gray-900">Qty</th>
-                      <th className="text-right py-2 text-sm font-medium text-gray-900">Price</th>
-                      <th className="text-right py-2 text-sm font-medium text-gray-900">Total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {generatedInvoice.items.map((item: any, index: number) => (
-                      <tr key={index} className="border-b border-gray-100">
-                        <td className="py-3 text-sm text-gray-900">{item.description}</td>
-                        <td className="py-3 text-sm text-gray-600 text-right">{item.quantity}</td>
-                        <td className="py-3 text-sm text-gray-600 text-right">{formatCurrency(item.unitPrice)}</td>
-                        <td className="py-3 text-sm text-gray-900 text-right font-medium">{formatCurrency(item.total)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Totals */}
-              <div className="flex justify-end">
-                <div className="w-64 space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Subtotal:</span>
-                    <span className="text-gray-900">{formatCurrency(generatedInvoice.subtotal)}</span>
-                  </div>
-                  <div className="border-t border-gray-200 pt-2">
-                    <div className="flex justify-between">
-                      <span className="font-semibold text-black">Total:</span>
-                      <span className="font-bold text-xl text-black">{formatCurrency(generatedInvoice.total)}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Notes */}
-              {generatedInvoice.notes && (
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-2">Notes:</h3>
-                  <p className="text-sm text-gray-600 whitespace-pre-line">{generatedInvoice.notes}</p>
-                </div>
-              )}
-
-            </div>
-          </Modal>
-        )}
 
         {/* Toast */}
         {toastMessage && (
