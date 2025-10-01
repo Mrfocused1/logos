@@ -49,7 +49,7 @@ const LandingPage: React.FC = () => {
     },
     {
       id: 2,
-      name: "veryveebrown",
+      name: "@veryveebrown",
       designation: "Client",
       image: "https://bookingagentinfo.com/wp-content/uploads/2022/02/Vee-Brown.png"
     },
