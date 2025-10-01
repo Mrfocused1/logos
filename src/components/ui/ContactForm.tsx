@@ -231,7 +231,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmit, className })
           type="submit"
           variant="primary"
           size="sm"
-          className="flex-1 sm:size-lg py-2 sm:py-3 text-sm sm:text-base bg-black text-white hover:bg-gray-800 hover:text-white"
+          className="flex-1 sm:size-lg py-2 sm:py-3 text-sm sm:text-base bg-black text-white hover:bg-white hover:text-black hover:border-black border-2 border-black transition-all duration-300"
         >
           Send Message
         </Button>
