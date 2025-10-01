@@ -203,15 +203,13 @@ const LandingPage: React.FC = () => {
           >
             <div className="text-center flex-1 min-w-0">
               <div className="text-xl sm:text-2xl font-bold text-gray-900 whitespace-nowrap">
-                <span className="md:hidden"><AnimatedCounter value={70} suffix="+" /></span>
-                <span className="hidden md:inline">70+</span>
+                70+
               </div>
               <div className="text-xs sm:text-sm text-gray-600 leading-tight">Happy Clients</div>
             </div>
             <div className="text-center flex-1 min-w-0">
               <div className="text-xl sm:text-2xl font-bold text-gray-900">
-                <span className="md:hidden"><AnimatedCounter value={90} suffix="+" /></span>
-                <span className="hidden md:inline">90+</span>
+                90+
               </div>
               <div className="text-xs sm:text-sm text-gray-600 leading-tight">Projects</div>
             </div>
