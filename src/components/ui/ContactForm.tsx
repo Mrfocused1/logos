@@ -80,7 +80,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmit, className })
           onClick={() => setShowForm(true)}
           variant="primary"
           size="lg"
-          className="w-full bg-black text-white hover:bg-gray-800 hover:text-white"
+          className="w-full bg-black text-white hover:bg-white hover:text-black hover:border-black border-2 border-black transition-all duration-300"
         >
           Contact Me
         </Button>
