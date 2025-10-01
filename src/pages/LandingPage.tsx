@@ -224,7 +224,7 @@ const LandingPage: React.FC = () => {
           {/* Popular Clients */}
           <motion.div
             variants={itemVariants}
-            className="mt-8 mb-1 sm:mb-4"
+            className="mt-2 mb-1 sm:mb-4"
           >
             <p className="text-lg text-black mb-4 font-bold">Popular clients</p>
             <AvatarGroup
