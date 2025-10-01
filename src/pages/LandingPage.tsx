@@ -36,46 +36,40 @@ const LandingPage: React.FC = () => {
   };
 
   const handlePayNow = () => {
-    // Scroll to contact section
-    const contactSection = document.getElementById('contact');
-    if (contactSection) {
-      contactSection.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
-    }
+    // Open Stripe payment link in new tab
+    window.open('https://buy.stripe.com/cNiaEY1oCaDA5i002k63K0n', '_blank');
   };
 
   const clientAvatars = [
     {
       id: 1,
-      name: "Sarah Johnson",
-      designation: "CEO",
-      image: "https://images.unsplash.com/photo-1494790108755-2616b96a7e4c?w=150&h=150&fit=crop&crop=face"
+      name: "@castillo_1st",
+      designation: "Client",
+      image: "https://yt3.googleusercontent.com/OJLvvhbweaQnGQjNb56FnrxXIIo4uPuU48fYlPipEmvLK7M4dGB_6kXamUkLQSkmpojYCA5rqSs=s900-c-k-c0x00ffffff-no-rj"
     },
     {
       id: 2,
-      name: "Michael Chen",
-      designation: "Designer",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
+      name: "veryveebrown",
+      designation: "Client",
+      image: "https://bookingagentinfo.com/wp-content/uploads/2022/02/Vee-Brown.png"
     },
     {
       id: 3,
-      name: "Emily Rodriguez",
-      designation: "Marketing",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face"
+      name: "@pk_humble",
+      designation: "Client",
+      image: "https://www.thesun.co.uk/wp-content/uploads/2025/03/crop-0_008281.jpg?strip=all&quality=100&w=833&h=554&crop=1"
     },
     {
       id: 4,
-      name: "David Kim",
-      designation: "Developer",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
+      name: "@Nattyranx",
+      designation: "Client",
+      image: "https://d14u0p1qkech25.cloudfront.net/171189_e8624323-1d08-4840-8ca3-0103a6661f5e_thumbnail_250x250"
     },
     {
       id: 5,
-      name: "Lisa Wang",
-      designation: "Product Manager",
-      image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face"
+      name: "@jaysqrddd",
+      designation: "Client",
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKZyR1ObdH6FC49k60-NlCUQCRIOLCWk7Jsw&s"
     },
     {
       id: 6,
