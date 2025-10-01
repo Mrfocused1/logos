@@ -11,7 +11,6 @@ export interface ContactFormData {
   name: string;
   email: string;
   projectType: string;
-  budget: string;
   message: string;
   logoFile?: File;
 }
@@ -21,7 +20,6 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmit, className })
     name: '',
     email: '',
     projectType: '',
-    budget: '',
     message: '',
   });
   const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -135,7 +133,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmit, className })
           required
           value={formData.projectType}
           onChange={handleInputChange}
-          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-black focus:outline-none focus:ring-1 focus:ring-black transition-colors"
+          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-black focus:outline-none focus:ring-1 focus:ring-black transition-colors appearance-none bg-white"
         >
           <option value="">Select a project type</option>
           <option value="brand-identity">Brand Identity</option>
@@ -147,25 +145,6 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmit, className })
         </select>
       </div>
 
-      <div>
-        <label htmlFor="budget" className="block text-sm font-medium text-gray-700 mb-2">
-          Budget Range
-        </label>
-        <select
-          id="budget"
-          name="budget"
-          value={formData.budget}
-          onChange={handleInputChange}
-          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-black focus:outline-none focus:ring-1 focus:ring-black transition-colors"
-        >
-          <option value="">Select budget range</option>
-          <option value="under-500">Under $500</option>
-          <option value="500-1000">$500 - $1,000</option>
-          <option value="1000-2500">$1,000 - $2,500</option>
-          <option value="2500-5000">$2,500 - $5,000</option>
-          <option value="over-5000">Over $5,000</option>
-        </select>
-      </div>
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
