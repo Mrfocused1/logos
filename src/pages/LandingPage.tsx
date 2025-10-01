@@ -135,7 +135,7 @@ const LandingPage: React.FC = () => {
       </a>
 
       {/* Hero Section */}
-      <section id="main-content" className="relative min-h-screen flex items-start justify-center px-4 pt-16 pb-4 sm:pt-24 sm:pb-20 overflow-hidden z-10">
+      <section id="main-content" className="relative min-h-screen flex items-start justify-center px-4 pt-24 pb-4 sm:pt-24 sm:pb-20 overflow-hidden z-10">
         <motion.div
           className="max-w-6xl mx-auto text-center relative z-10"
           initial="hidden"
