@@ -199,17 +199,17 @@ const LandingPage: React.FC = () => {
           {/* Stats Row */}
           <motion.div
             variants={itemVariants}
-            className="flex justify-center items-center space-x-2 sm:space-x-8 max-w-full mx-auto mb-4 px-2"
+            className="flex justify-center items-center space-x-2 sm:space-x-8 max-w-full mx-auto mb-8 px-2"
           >
             <div className="text-center flex-1 min-w-0">
               <div className="text-xl sm:text-2xl font-bold text-gray-900 whitespace-nowrap">
-                70+
+                <AnimatedCounter from={0} to={70} />+
               </div>
               <div className="text-xs sm:text-sm text-gray-600 leading-tight">Happy Clients</div>
             </div>
             <div className="text-center flex-1 min-w-0">
               <div className="text-xl sm:text-2xl font-bold text-gray-900">
-                90+
+                <AnimatedCounter from={0} to={90} />+
               </div>
               <div className="text-xs sm:text-sm text-gray-600 leading-tight">Projects</div>
             </div>
