@@ -119,9 +119,9 @@ const LandingPage: React.FC = () => {
         <Squares
           direction="diagonal"
           speed={0.3}
-          borderColor="rgba(0, 0, 0, 0.008)"
+          borderColor="rgba(0, 0, 0, 0.025)"
           squareSize={40}
-          hoverFillColor="rgba(0, 0, 0, 0.005)"
+          hoverFillColor="rgba(0, 0, 0, 0.015)"
         />
       </div>
 
@@ -201,21 +201,21 @@ const LandingPage: React.FC = () => {
           >
             <div className="text-center flex-1 min-w-0">
               <div className="text-xl sm:text-2xl font-bold text-gray-900 whitespace-nowrap">
-                100+
+                70+
               </div>
               <div className="text-xs sm:text-sm text-gray-600 leading-tight">Happy Clients</div>
             </div>
             <div className="text-center flex-1 min-w-0">
               <div className="text-xl sm:text-2xl font-bold text-gray-900">
-                5
+                90+
               </div>
-              <div className="text-xs sm:text-sm text-gray-600 leading-tight">Design Versions</div>
+              <div className="text-xs sm:text-sm text-gray-600 leading-tight">Projects</div>
             </div>
             <div className="text-center flex-1 min-w-0">
               <div className="text-xl sm:text-2xl font-bold text-gray-900">
-                3
+                Unlimited
               </div>
-              <div className="text-xs sm:text-sm text-gray-600 leading-tight">Revisions</div>
+              <div className="text-xs sm:text-sm text-gray-600 leading-tight">Potential</div>
             </div>
           </motion.div>
 
