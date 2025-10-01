@@ -187,7 +187,7 @@ const LandingPage: React.FC = () => {
 
           <motion.div
             variants={itemVariants}
-            className="flex justify-center items-center mb-24"
+            className="flex justify-center items-center mb-24 md:mb-16"
           >
             <InteractiveHoverButton
               text="Pay Now"
