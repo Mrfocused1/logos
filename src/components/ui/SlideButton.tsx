@@ -118,23 +118,22 @@ const SlideButton = forwardRef<HTMLButtonElement, SlideButtonProps>(
       }
     };
 
-    // Click and drag effect - clicking on track moves handle to click position
-    const handleTrackClick = useCallback((event: React.MouseEvent) => {
+    // Click/Touch handler for track interaction
+    const handleTrackInteraction = useCallback((clientX: number) => {
       if (completed || isDragging) return;
 
       const trackElement = containerRef.current;
       if (!trackElement) return;
 
       const rect = trackElement.getBoundingClientRect();
-      const clickX = event.clientX - rect.left;
-      const trackWidth = rect.width;
+      const clickX = clientX - rect.left;
 
       // Calculate position relative to drag constraints
-      const relativeX = Math.max(0, Math.min(clickX - 28, DRAG_CONSTRAINTS.right)); // Subtract handle radius + left offset
+      const relativeX = Math.max(0, Math.min(clickX - 28, DRAG_CONSTRAINTS.right));
 
       dragX.set(relativeX);
 
-      // Check if click position would complete the action
+      // Check if position would complete the action
       const progress = relativeX / DRAG_CONSTRAINTS.right;
       if (progress >= DRAG_THRESHOLD) {
         setCompleted(true);
@@ -142,6 +141,16 @@ const SlideButton = forwardRef<HTMLButtonElement, SlideButtonProps>(
         onSlideComplete?.();
       }
     }, [completed, isDragging, dragX, handleSubmit, onSlideComplete]);
+
+    const handleTrackClick = useCallback((event: React.MouseEvent) => {
+      handleTrackInteraction(event.clientX);
+    }, [handleTrackInteraction]);
+
+    const handleTrackTouch = useCallback((event: React.TouchEvent) => {
+      if (event.touches.length === 1) {
+        handleTrackInteraction(event.touches[0].clientX);
+      }
+    }, [handleTrackInteraction]);
 
     const handleDrag = (
       _event: MouseEvent | TouchEvent | PointerEvent,
@@ -223,6 +232,7 @@ const SlideButton = forwardRef<HTMLButtonElement, SlideButtonProps>(
         tabIndex={0}
         onKeyDown={handleKeyDown}
         onClick={handleTrackClick}
+        onTouchStart={handleTrackTouch}
         role="slider"
         aria-valuemin={0}
         aria-valuemax={100}

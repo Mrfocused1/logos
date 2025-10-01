@@ -61,7 +61,7 @@ const TextRevealByWord: FC<TextRevealByWordProps> = ({
     <div
       ref={targetRef}
       className={cn(
-        "relative z-0 h-[120vh] md:h-[120vh]",
+        "relative z-0 h-[80vh] md:h-[120vh]",
         isMobile && !animationComplete ? "md:snap-start md:snap-mandatory" : "",
         className
       )}

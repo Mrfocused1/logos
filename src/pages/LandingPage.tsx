@@ -140,7 +140,7 @@ const LandingPage: React.FC = () => {
       </a>
 
       {/* Hero Section */}
-      <section id="main-content" className="relative min-h-screen flex items-start justify-center px-4 pt-16 pb-8 sm:pt-24 sm:pb-20 overflow-hidden z-10">
+      <section id="main-content" className="relative min-h-screen flex items-start justify-center px-4 pt-16 pb-4 sm:pt-24 sm:pb-20 overflow-hidden z-10">
         <motion.div
           className="max-w-6xl mx-auto text-center relative z-10"
           initial="hidden"
@@ -203,32 +203,32 @@ const LandingPage: React.FC = () => {
           {/* Stats Row */}
           <motion.div
             variants={itemVariants}
-            className="flex justify-center items-center space-x-4 sm:space-x-8 max-w-full mx-auto mb-4 px-4"
+            className="flex justify-center items-center space-x-2 sm:space-x-8 max-w-full mx-auto mb-4 px-2"
           >
-            <div className="text-center flex-1">
-              <div className="text-lg sm:text-2xl font-bold text-gray-900">
+            <div className="text-center flex-1 min-w-0">
+              <div className="text-xl sm:text-2xl font-bold text-gray-900 whitespace-nowrap">
                 100+
               </div>
-              <div className="text-xs sm:text-sm text-gray-600">Happy Clients</div>
+              <div className="text-xs sm:text-sm text-gray-600 leading-tight">Happy Clients</div>
             </div>
-            <div className="text-center flex-1">
-              <div className="text-lg sm:text-2xl font-bold text-gray-900">
+            <div className="text-center flex-1 min-w-0">
+              <div className="text-xl sm:text-2xl font-bold text-gray-900">
                 5
               </div>
-              <div className="text-xs sm:text-sm text-gray-600">Design Versions</div>
+              <div className="text-xs sm:text-sm text-gray-600 leading-tight">Design Versions</div>
             </div>
-            <div className="text-center flex-1">
-              <div className="text-lg sm:text-2xl font-bold text-gray-900">
+            <div className="text-center flex-1 min-w-0">
+              <div className="text-xl sm:text-2xl font-bold text-gray-900">
                 3
               </div>
-              <div className="text-xs sm:text-sm text-gray-600">Revisions</div>
+              <div className="text-xs sm:text-sm text-gray-600 leading-tight">Revisions</div>
             </div>
           </motion.div>
 
           {/* Popular Clients */}
           <motion.div
             variants={itemVariants}
-            className="mt-8 mb-4"
+            className="mt-8 mb-1 sm:mb-4"
           >
             <p className="text-lg text-gray-600 mb-4">Popular clients</p>
             <AvatarGroup
@@ -248,7 +248,7 @@ const LandingPage: React.FC = () => {
       />
 
       {/* Services Section with Typewriter Effect */}
-      <section id="services" className="relative px-4 py-20 sm:py-32 overflow-visible z-10" aria-labelledby="services-heading">
+      <section id="services" className="relative px-4 py-8 sm:py-20 overflow-visible z-10" aria-labelledby="services-heading">
         <div className="max-w-7xl mx-auto relative z-10">
           <motion.div
             initial="hidden"
