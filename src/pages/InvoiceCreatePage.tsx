@@ -1,0 +1,589 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { ArrowLeft, FileText, Plus, Trash2, Copy, Check, Eye } from 'lucide-react';
+import { Button, GlassCard, Input, Modal, Toast } from '../components/ui';
+import type { InvoiceFormData } from '../types/invoice';
+import { DEFAULT_PAYMENT_TERMS } from '../types/invoice';
+import {
+  createInvoiceFromForm,
+  generateInvoiceUrl,
+  validateEmail,
+  validateSlug,
+  calculateDueDate,
+  calculateItemTotal,
+  formatCurrency
+} from '../utils/invoice';
+
+const InvoiceCreatePage: React.FC = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState<InvoiceFormData>({
+    clientName: '',
+    clientEmail: '',
+    clientAddress: '',
+    clientPhone: '',
+    customSlug: '',
+    dueDate: calculateDueDate(30),
+    items: [{ description: '', quantity: 1, unitPrice: 0 }],
+    taxRate: 20,
+    notes: '',
+    paymentTerms: DEFAULT_PAYMENT_TERMS[0]
+  });
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showPreview, setShowPreview] = useState(false);
+  const [generatedInvoice, setGeneratedInvoice] = useState<any>(null);
+  const [copySuccess, setCopySuccess] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    setTimeout(() => setToastMessage(''), 3000);
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    // Required fields
+    if (!formData.clientName.trim()) {
+      newErrors.clientName = 'Client name is required';
+    }
+
+    if (!formData.clientEmail.trim()) {
+      newErrors.clientEmail = 'Client email is required';
+    } else if (!validateEmail(formData.clientEmail)) {
+      newErrors.clientEmail = 'Please enter a valid email address';
+    }
+
+    if (!formData.dueDate) {
+      newErrors.dueDate = 'Due date is required';
+    }
+
+    // Custom slug validation
+    if (formData.customSlug && !validateSlug(formData.customSlug)) {
+      newErrors.customSlug = 'Slug must be 3-50 characters, lowercase letters, numbers, and hyphens only';
+    }
+
+    // Items validation
+    formData.items.forEach((item, index) => {
+      if (!item.description.trim()) {
+        newErrors[`item-${index}-description`] = 'Description is required';
+      }
+      if (item.quantity <= 0) {
+        newErrors[`item-${index}-quantity`] = 'Quantity must be greater than 0';
+      }
+      if (item.unitPrice <= 0) {
+        newErrors[`item-${index}-unitPrice`] = 'Unit price must be greater than 0';
+      }
+    });
+
+    // At least one item required
+    if (formData.items.length === 0) {
+      newErrors.items = 'At least one item is required';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const addItem = () => {
+    setFormData(prev => ({
+      ...prev,
+      items: [...prev.items, { description: '', quantity: 1, unitPrice: 0 }]
+    }));
+  };
+
+  const removeItem = (index: number) => {
+    if (formData.items.length > 1) {
+      setFormData(prev => ({
+        ...prev,
+        items: prev.items.filter((_, i) => i !== index)
+      }));
+    }
+  };
+
+  const updateItem = (index: number, field: string, value: string | number) => {
+    setFormData(prev => ({
+      ...prev,
+      items: prev.items.map((item, i) =>
+        i === index ? { ...item, [field]: value } : item
+      )
+    }));
+  };
+
+  const calculateTotals = () => {
+    const items = formData.items.map(item => ({
+      ...item,
+      total: calculateItemTotal(item.quantity, item.unitPrice)
+    }));
+
+    const subtotal = items.reduce((sum, item) => sum + item.total, 0);
+    const taxAmount = Math.round((subtotal * (formData.taxRate / 100)) * 100) / 100;
+    const total = Math.round((subtotal + taxAmount) * 100) / 100;
+
+    return { subtotal, taxAmount, total };
+  };
+
+  const handlePreview = () => {
+    if (!validateForm()) {
+      showToast('Please fix the errors before previewing');
+      return;
+    }
+
+    const invoice = createInvoiceFromForm(formData, 'admin');
+    setGeneratedInvoice(invoice);
+    setShowPreview(true);
+  };
+
+  const handleCreateInvoice = () => {
+    if (!validateForm()) {
+      showToast('Please fix the errors before creating the invoice');
+      return;
+    }
+
+    const invoice = createInvoiceFromForm(formData, 'admin');
+    const invoiceUrl = generateInvoiceUrl(invoice.customSlug!);
+
+    // In a real app, you would save to database here
+    console.log('Invoice created:', invoice);
+
+    showToast('Invoice created successfully!');
+    setGeneratedInvoice(invoice);
+
+    // Navigate to invoice view (we'll create this component next)
+    // navigate(`/invoice/${invoice.customSlug}`);
+  };
+
+  const copyInvoiceUrl = () => {
+    if (generatedInvoice) {
+      const url = generateInvoiceUrl(generatedInvoice.customSlug);
+      navigator.clipboard.writeText(url);
+      setCopySuccess(true);
+      showToast('Invoice URL copied to clipboard!');
+      setTimeout(() => setCopySuccess(false), 2000);
+    }
+  };
+
+  const { subtotal, taxAmount, total } = calculateTotals();
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 px-4 py-12">
+      <div className="max-w-4xl mx-auto">
+        {/* Back Button */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3 }}
+          className="mb-8"
+        >
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/')}
+            className="gap-2"
+            aria-label="Go back to home"
+          >
+            <ArrowLeft size={20} />
+            Back to Home
+          </Button>
+        </motion.div>
+
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-8"
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-3 bg-primary/10 rounded-xl">
+              <FileText className="w-6 h-6 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold font-heading text-gray-900">
+                Create Invoice
+              </h1>
+              <p className="text-gray-600">
+                Generate a professional invoice for your client
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Form */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="lg:col-span-2 space-y-8"
+          >
+            {/* Client Information */}
+            <GlassCard className="p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Client Information</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Input
+                  label="Client Name"
+                  placeholder="Enter client name"
+                  value={formData.clientName}
+                  onChange={(e) => setFormData(prev => ({ ...prev, clientName: e.target.value }))}
+                  error={errors.clientName}
+                  required
+                />
+                <Input
+                  label="Client Email"
+                  type="email"
+                  placeholder="client@example.com"
+                  value={formData.clientEmail}
+                  onChange={(e) => setFormData(prev => ({ ...prev, clientEmail: e.target.value }))}
+                  error={errors.clientEmail}
+                  required
+                />
+                <Input
+                  label="Phone Number"
+                  placeholder="Enter phone number"
+                  value={formData.clientPhone}
+                  onChange={(e) => setFormData(prev => ({ ...prev, clientPhone: e.target.value }))}
+                />
+                <Input
+                  label="Custom URL Slug"
+                  placeholder="my-client-invoice"
+                  value={formData.customSlug}
+                  onChange={(e) => setFormData(prev => ({ ...prev, customSlug: e.target.value }))}
+                  error={errors.customSlug}
+                  helperText="Optional: Create a custom URL for easy sharing"
+                />
+              </div>
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Client Address
+                </label>
+                <textarea
+                  className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+                  rows={3}
+                  placeholder="Enter client address"
+                  value={formData.clientAddress}
+                  onChange={(e) => setFormData(prev => ({ ...prev, clientAddress: e.target.value }))}
+                />
+              </div>
+            </GlassCard>
+
+            {/* Invoice Details */}
+            <GlassCard className="p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Invoice Details</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Input
+                  label="Due Date"
+                  type="date"
+                  value={formData.dueDate}
+                  onChange={(e) => setFormData(prev => ({ ...prev, dueDate: e.target.value }))}
+                  error={errors.dueDate}
+                  required
+                />
+                <Input
+                  label="Tax Rate (%)"
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.01"
+                  value={formData.taxRate}
+                  onChange={(e) => setFormData(prev => ({ ...prev, taxRate: parseFloat(e.target.value) || 0 }))}
+                />
+              </div>
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Payment Terms
+                </label>
+                <select
+                  className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
+                  value={formData.paymentTerms}
+                  onChange={(e) => setFormData(prev => ({ ...prev, paymentTerms: e.target.value }))}
+                >
+                  {DEFAULT_PAYMENT_TERMS.map(term => (
+                    <option key={term} value={term}>{term}</option>
+                  ))}
+                </select>
+              </div>
+            </GlassCard>
+
+            {/* Invoice Items */}
+            <GlassCard className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-gray-900">Invoice Items</h2>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={addItem}
+                  className="gap-2"
+                >
+                  <Plus size={16} />
+                  Add Item
+                </Button>
+              </div>
+
+              <div className="space-y-4">
+                {formData.items.map((item, index) => (
+                  <div key={index} className="grid grid-cols-12 gap-4 items-start p-4 bg-white/50 rounded-xl">
+                    <div className="col-span-12 sm:col-span-5">
+                      <Input
+                        label="Description"
+                        placeholder="Item description"
+                        value={item.description}
+                        onChange={(e) => updateItem(index, 'description', e.target.value)}
+                        error={errors[`item-${index}-description`]}
+                        size="sm"
+                      />
+                    </div>
+                    <div className="col-span-6 sm:col-span-2">
+                      <Input
+                        label="Qty"
+                        type="number"
+                        min="1"
+                        value={item.quantity}
+                        onChange={(e) => updateItem(index, 'quantity', parseInt(e.target.value) || 1)}
+                        error={errors[`item-${index}-quantity`]}
+                        size="sm"
+                      />
+                    </div>
+                    <div className="col-span-6 sm:col-span-3">
+                      <Input
+                        label="Unit Price"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={item.unitPrice}
+                        onChange={(e) => updateItem(index, 'unitPrice', parseFloat(e.target.value) || 0)}
+                        error={errors[`item-${index}-unitPrice`]}
+                        size="sm"
+                      />
+                    </div>
+                    <div className="col-span-10 sm:col-span-1 flex items-end">
+                      <div className="text-sm font-medium text-gray-900 mb-3">
+                        {formatCurrency(calculateItemTotal(item.quantity, item.unitPrice))}
+                      </div>
+                    </div>
+                    <div className="col-span-2 sm:col-span-1 flex items-end">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeItem(index)}
+                        disabled={formData.items.length === 1}
+                        className="text-red-500 hover:text-red-700 p-2"
+                      >
+                        <Trash2 size={16} />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </GlassCard>
+
+            {/* Additional Information */}
+            <GlassCard className="p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Additional Information</h2>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Notes
+                </label>
+                <textarea
+                  className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+                  rows={4}
+                  placeholder="Add any additional notes or terms..."
+                  value={formData.notes}
+                  onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+                />
+              </div>
+            </GlassCard>
+          </motion.div>
+
+          {/* Sidebar - Invoice Summary */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="space-y-6"
+          >
+            {/* Invoice Summary */}
+            <GlassCard className="p-6 sticky top-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Invoice Summary</h3>
+
+              <div className="space-y-3">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Subtotal:</span>
+                  <span className="text-gray-900">{formatCurrency(subtotal)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Tax ({formData.taxRate}%):</span>
+                  <span className="text-gray-900">{formatCurrency(taxAmount)}</span>
+                </div>
+                <div className="border-t border-gray-200 pt-3">
+                  <div className="flex justify-between">
+                    <span className="font-semibold text-gray-900">Total:</span>
+                    <span className="font-bold text-xl text-primary">{formatCurrency(total)}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 space-y-3">
+                <Button
+                  variant="primary"
+                  className="w-full gap-2"
+                  onClick={handlePreview}
+                >
+                  <Eye size={16} />
+                  Preview Invoice
+                </Button>
+                <Button
+                  variant="secondary"
+                  className="w-full"
+                  onClick={handleCreateInvoice}
+                >
+                  Create Invoice
+                </Button>
+              </div>
+
+              {generatedInvoice && (
+                <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-xl">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-green-800">
+                        Invoice Created!
+                      </p>
+                      <p className="text-xs text-green-600">
+                        {generatedInvoice.invoiceNumber}
+                      </p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={copyInvoiceUrl}
+                      className="gap-2"
+                    >
+                      {copySuccess ? <Check size={16} /> : <Copy size={16} />}
+                      {copySuccess ? 'Copied!' : 'Copy URL'}
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </GlassCard>
+          </motion.div>
+        </div>
+
+        {/* Preview Modal */}
+        {showPreview && generatedInvoice && (
+          <Modal
+            isOpen={showPreview}
+            onClose={() => setShowPreview(false)}
+            title="Invoice Preview"
+            size="lg"
+          >
+            <div className="space-y-6">
+              {/* Invoice Header */}
+              <div className="flex justify-between items-start">
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900">INVOICE</h1>
+                  <p className="text-gray-600">#{generatedInvoice.invoiceNumber}</p>
+                </div>
+                <div className="text-right">
+                  <h2 className="text-lg font-bold text-primary">BOLA LOGOS</h2>
+                  <p className="text-sm text-gray-600">Inspiring Visual Storytelling</p>
+                </div>
+              </div>
+
+              {/* Client Info */}
+              <div className="grid grid-cols-2 gap-8">
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">Bill To:</h3>
+                  <div className="text-sm text-gray-600">
+                    <p className="font-medium">{generatedInvoice.clientName}</p>
+                    <p>{generatedInvoice.clientEmail}</p>
+                    {generatedInvoice.clientAddress && (
+                      <p className="whitespace-pre-line">{generatedInvoice.clientAddress}</p>
+                    )}
+                    {generatedInvoice.clientPhone && <p>{generatedInvoice.clientPhone}</p>}
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm text-gray-600">
+                    <p><span className="font-medium">Issue Date:</span> {new Date(generatedInvoice.issueDate).toLocaleDateString()}</p>
+                    <p><span className="font-medium">Due Date:</span> {new Date(generatedInvoice.dueDate).toLocaleDateString()}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Items Table */}
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-gray-200">
+                      <th className="text-left py-2 text-sm font-medium text-gray-900">Description</th>
+                      <th className="text-right py-2 text-sm font-medium text-gray-900">Qty</th>
+                      <th className="text-right py-2 text-sm font-medium text-gray-900">Price</th>
+                      <th className="text-right py-2 text-sm font-medium text-gray-900">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {generatedInvoice.items.map((item: any, index: number) => (
+                      <tr key={index} className="border-b border-gray-100">
+                        <td className="py-3 text-sm text-gray-900">{item.description}</td>
+                        <td className="py-3 text-sm text-gray-600 text-right">{item.quantity}</td>
+                        <td className="py-3 text-sm text-gray-600 text-right">{formatCurrency(item.unitPrice)}</td>
+                        <td className="py-3 text-sm text-gray-900 text-right font-medium">{formatCurrency(item.total)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Totals */}
+              <div className="flex justify-end">
+                <div className="w-64 space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Subtotal:</span>
+                    <span className="text-gray-900">{formatCurrency(generatedInvoice.subtotal)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Tax ({generatedInvoice.taxRate}%):</span>
+                    <span className="text-gray-900">{formatCurrency(generatedInvoice.taxAmount)}</span>
+                  </div>
+                  <div className="border-t border-gray-200 pt-2">
+                    <div className="flex justify-between">
+                      <span className="font-semibold text-gray-900">Total:</span>
+                      <span className="font-bold text-xl text-primary">{formatCurrency(generatedInvoice.total)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Notes */}
+              {generatedInvoice.notes && (
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">Notes:</h3>
+                  <p className="text-sm text-gray-600 whitespace-pre-line">{generatedInvoice.notes}</p>
+                </div>
+              )}
+
+              {/* Payment Terms */}
+              {generatedInvoice.paymentTerms && (
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">Payment Terms:</h3>
+                  <p className="text-sm text-gray-600">{generatedInvoice.paymentTerms}</p>
+                </div>
+              )}
+            </div>
+          </Modal>
+        )}
+
+        {/* Toast */}
+        {toastMessage && (
+          <Toast
+            message={toastMessage}
+            type="success"
+            onClose={() => setToastMessage('')}
+          />
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default InvoiceCreatePage;
