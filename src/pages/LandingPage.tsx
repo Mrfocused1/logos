@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, LayoutGroup, useInView } from 'framer-motion';
 import { CheckCircle, Palette, Users, CreditCard, FileText, BookOpen } from 'lucide-react';
+import { emailService } from '../services/emailService';
+import type { ContactFormData } from '../components/ui/ContactForm';
 import {
   SlideButton,
   InteractiveHoverButton,
@@ -138,9 +140,9 @@ const LandingPage: React.FC = () => {
         <Squares
           direction="diagonal"
           speed={0.3}
-          borderColor="rgba(0, 0, 0, 0.025)"
-          squareSize={40}
-          hoverFillColor="rgba(0, 0, 0, 0.015)"
+          borderColor="rgba(0, 0, 0, 0.015)"
+          squareSize={25}
+          hoverFillColor="rgba(0, 0, 0, 0.008)"
         />
       </div>
 
@@ -340,9 +342,19 @@ const LandingPage: React.FC = () => {
 
                 {/* Contact Form */}
                 <ContactForm
-                  onSubmit={(data) => {
+                  onSubmit={async (data: ContactFormData) => {
                     console.log('Contact form submitted:', data);
-                    // Handle form submission here
+
+                    try {
+                      // For now, use the mailto fallback method
+                      emailService.openMailto(data);
+
+                      // Show success message (you can replace this with a toast notification)
+                      alert('Thank you! Your message has been prepared. Please send the email that just opened.');
+                    } catch (error) {
+                      console.error('Error sending email:', error);
+                      alert('Sorry, there was an error. Please try again or contact us directly at logosbola@gmail.com');
+                    }
                   }}
                   className="text-left"
                 />
