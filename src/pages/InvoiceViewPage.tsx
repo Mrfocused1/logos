@@ -81,6 +81,7 @@ const InvoiceViewPage: React.FC = () => {
             total: 1080.00,
             notes: 'Thank you for choosing BOLA LOGOS for your design needs.',
             paymentTerms: 'Payment due within 30 days',
+            paymentLink: 'https://paypal.me/bolalogos/1080',
             createdAt: '2025-01-15T10:00:00Z',
             updatedAt: '2025-01-15T10:00:00Z',
             createdBy: 'admin'
@@ -113,10 +114,17 @@ const InvoiceViewPage: React.FC = () => {
   };
 
   const handlePayment = () => {
+    console.log('Payment button clicked');
+    console.log('Invoice data:', invoice);
+    console.log('Payment link:', invoice?.paymentLink);
+
     if (invoice?.paymentLink) {
+      console.log('Opening payment link:', invoice.paymentLink);
       // Open the payment link provided by the admin
       window.open(invoice.paymentLink, '_blank');
+      showToast(`Opening payment link: ${invoice.paymentLink}`);
     } else {
+      console.log('No payment link found');
       showToast('No payment link available for this invoice.');
     }
   };
