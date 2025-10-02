@@ -12,7 +12,7 @@ import {
   MapPin,
   CreditCard
 } from 'lucide-react';
-import { Button, GlassCard, Toast, InteractiveHoverButton } from '../components/ui';
+import { Button, GlassCard, Toast, InteractiveHoverButton, Squares } from '../components/ui';
 import type { InvoiceData } from '../types/invoice';
 import { formatCurrency, formatDate, isOverdue } from '../utils/invoice';
 import { INVOICE_STATUS_COLORS } from '../types/invoice';
@@ -123,9 +123,19 @@ const InvoiceViewPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 flex items-center justify-center">
-        <GlassCard className="p-8 text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+      <div className="min-h-screen bg-white text-gray-900 relative overflow-hidden flex items-center justify-center">
+        {/* Animated Grid Background */}
+        <div className="fixed inset-0 z-0">
+          <Squares
+            direction="diagonal"
+            speed={0.3}
+            borderColor="rgba(0, 0, 0, 0.015)"
+            squareSize={25}
+            hoverFillColor="rgba(0, 0, 0, 0.008)"
+          />
+        </div>
+        <GlassCard className="p-8 text-center relative z-10 bg-white/90 backdrop-blur-sm border border-gray-200">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4"></div>
           <p className="text-gray-600">Loading invoice...</p>
         </GlassCard>
       </div>
@@ -134,8 +144,18 @@ const InvoiceViewPage: React.FC = () => {
 
   if (!invoice) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 flex items-center justify-center px-4">
-        <GlassCard className="p-8 text-center max-w-md mx-auto">
+      <div className="min-h-screen bg-white text-gray-900 relative overflow-hidden flex items-center justify-center px-4">
+        {/* Animated Grid Background */}
+        <div className="fixed inset-0 z-0">
+          <Squares
+            direction="diagonal"
+            speed={0.3}
+            borderColor="rgba(0, 0, 0, 0.015)"
+            squareSize={25}
+            hoverFillColor="rgba(0, 0, 0, 0.008)"
+          />
+        </div>
+        <GlassCard className="p-8 text-center max-w-md mx-auto relative z-10 bg-white/90 backdrop-blur-sm border border-gray-200">
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-2xl">❌</span>
           </div>
@@ -160,8 +180,19 @@ const InvoiceViewPage: React.FC = () => {
   const overdue = isOverdue(invoice.dueDate, invoice.status);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 px-4 py-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-white text-gray-900 relative overflow-hidden px-4 py-8">
+      {/* Animated Grid Background */}
+      <div className="fixed inset-0 z-0">
+        <Squares
+          direction="diagonal"
+          speed={0.3}
+          borderColor="rgba(0, 0, 0, 0.015)"
+          squareSize={25}
+          hoverFillColor="rgba(0, 0, 0, 0.008)"
+        />
+      </div>
+
+      <div className="max-w-4xl mx-auto relative z-10">
         {/* Header Actions */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -207,7 +238,7 @@ const InvoiceViewPage: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
-          <GlassCard className="p-8 md:p-12">
+          <GlassCard className="p-8 md:p-12 bg-white/90 backdrop-blur-sm border border-gray-200">
             {/* Invoice Header */}
             <div className="flex flex-col lg:flex-row justify-between items-start mb-12">
               <div className="mb-6 lg:mb-0">
@@ -335,7 +366,7 @@ const InvoiceViewPage: React.FC = () => {
             {/* Payment Section */}
             {invoice.status !== 'paid' && (
               <div className="mb-12">
-                <GlassCard variant="subtle" className="p-6">
+                <GlassCard variant="subtle" className="p-6 bg-white/90 backdrop-blur-sm border border-gray-200">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 mb-2">
