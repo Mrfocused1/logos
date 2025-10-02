@@ -245,7 +245,6 @@ const InvoiceCreatePage: React.FC = () => {
                   </p>
                 </div>
               )}
-              </div>
             </GlassCard>
 
             {/* Invoice Details */}
