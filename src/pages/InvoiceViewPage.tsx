@@ -114,24 +114,10 @@ const InvoiceViewPage: React.FC = () => {
   };
 
   const handlePayment = () => {
-    console.log('Payment button clicked');
-    console.log('Invoice data:', invoice);
-    console.log('Payment link:', invoice?.paymentLink);
-
     if (invoice?.paymentLink) {
-      let paymentUrl = invoice.paymentLink.trim();
-
-      // Ensure the URL is absolute (starts with http:// or https://)
-      if (!paymentUrl.startsWith('http://') && !paymentUrl.startsWith('https://')) {
-        paymentUrl = 'https://' + paymentUrl;
-      }
-
-      console.log('Opening payment link:', paymentUrl);
-      // Open the payment link provided by the admin
-      window.open(paymentUrl, '_blank');
-      showToast(`Opening payment link: ${paymentUrl}`);
+      // Open the exact payment link the admin entered
+      window.open(invoice.paymentLink, '_blank');
     } else {
-      console.log('No payment link found');
       showToast('No payment link available for this invoice.');
     }
   };
