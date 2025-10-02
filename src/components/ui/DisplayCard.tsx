@@ -30,14 +30,14 @@ function DisplayCard({
   return (
     <motion.div
       className={cn(
-        "relative flex h-80 w-[22rem] -skew-y-[8deg] select-none flex-col justify-between rounded-xl border-2 bg-white/70 backdrop-blur-sm px-6 py-5 transition-all duration-700 after:absolute after:-right-1 after:top-[-5%] after:h-[110%] after:w-[20rem] after:bg-gradient-to-l after:from-purple-50/90 after:to-transparent after:content-[''] hover:border-white/30 hover:bg-white/80 [&>*]:flex [&>*]:flex-col [&>*]:gap-2",
+        "relative flex h-80 w-[22rem] -skew-y-[8deg] select-none flex-col justify-between rounded-xl border-2 bg-white/70 backdrop-blur-sm px-6 py-5 transition-all duration-700 after:absolute after:-right-1 after:top-[-5%] after:h-[110%] after:w-[20rem] after:bg-gradient-to-l after:from-gray-50/90 after:to-transparent after:content-[''] hover:border-white/30 hover:bg-white/80 [&>*]:flex [&>*]:flex-col [&>*]:gap-2",
         className
       )}
       whileHover={{ scale: 1.02, y: -8 }}
       transition={{ duration: 0.3 }}
     >
       <div className="flex items-center gap-3">
-        <span className="relative inline-block rounded-full bg-gradient-to-br from-purple-500 to-pink-500 p-3">
+        <span className="relative inline-block rounded-full bg-gradient-to-br from-gray-700 to-black p-3">
           {icon}
         </span>
         <p className={cn("text-xl font-bold font-heading", titleClassName)}>{title}</p>
@@ -50,7 +50,7 @@ function DisplayCard({
           <ul className="space-y-2">
             {features.map((feature, idx) => (
               <li key={idx} className="flex items-center text-sm text-gray-700">
-                <span className="w-2 h-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mr-3 flex-shrink-0" />
+                <span className="w-2 h-2 bg-gradient-to-r from-gray-700 to-black rounded-full mr-3 flex-shrink-0" />
                 {feature}
               </li>
             ))}

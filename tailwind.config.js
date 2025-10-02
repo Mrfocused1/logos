@@ -8,17 +8,17 @@ export default {
     extend: {
       colors: {
         primary: {
-          50: '#FAF5FF',
-          100: '#F3E8FF',
-          200: '#E9D5FF',
-          300: '#D8B4FE',
-          400: '#C084FC',
-          500: '#A855F7',
-          600: '#9333EA',
-          700: '#7E22CE',
-          800: '#6B21A8',
-          900: '#581C87',
-          DEFAULT: '#8B5CF6',
+          50: '#F8F9FA',
+          100: '#F1F3F4',
+          200: '#E8EAED',
+          300: '#DADCE0',
+          400: '#BDC1C6',
+          500: '#9AA0A6',
+          600: '#80868B',
+          700: '#5F6368',
+          800: '#3C4043',
+          900: '#202124',
+          DEFAULT: '#000000',
         },
         secondary: {
           DEFAULT: '#EC4899',
@@ -58,7 +58,7 @@ export default {
       boxShadow: {
         'glass': '0 8px 32px rgba(0, 0, 0, 0.1)',
         'glass-strong': '0 8px 32px rgba(0, 0, 0, 0.2)',
-        'purple-glow': '0 20px 40px rgba(139, 92, 246, 0.15)',
+        'black-glow': '0 20px 40px rgba(0, 0, 0, 0.15)',
       },
     },
   },

@@ -204,33 +204,13 @@ const InvoiceViewPage: React.FC = () => {
           <Button
             variant="ghost"
             onClick={() => navigate('/')}
-            className="gap-2 text-black hover:bg-black hover:text-white border border-black transition-all duration-300"
+            className="gap-2 !text-black !hover:text-white !hover:bg-black border border-black transition-all duration-300 bg-transparent"
             aria-label="Go back to home"
           >
             <ArrowLeft size={20} />
             Back to Home
           </Button>
 
-          <div className="flex gap-3">
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={copyInvoiceUrl}
-              className="gap-2"
-            >
-              {copySuccess ? <Check size={16} /> : <Copy size={16} />}
-              {copySuccess ? 'Copied!' : 'Share'}
-            </Button>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={handleDownload}
-              className="gap-2"
-            >
-              <Download size={16} />
-              Download PDF
-            </Button>
-          </div>
         </motion.div>
 
         {/* Invoice Container */}
@@ -244,16 +224,6 @@ const InvoiceViewPage: React.FC = () => {
             <div className="flex flex-col lg:flex-row justify-between items-start mb-12">
               <div className="mb-6 lg:mb-0">
                 <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">INVOICE</h1>
-                <div className="mt-3">
-                  <span className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${statusColor}`}>
-                    {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
-                  </span>
-                  {overdue && (
-                    <span className="ml-2 inline-flex px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
-                      Overdue
-                    </span>
-                  )}
-                </div>
               </div>
 
               <div className="text-left lg:text-right">

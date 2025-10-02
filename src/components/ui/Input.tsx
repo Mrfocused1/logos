@@ -14,7 +14,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 
     const inputClasses = `
       glass-input
-      ${hasError ? 'border-error focus:ring-error/20' : 'focus:border-primary focus:ring-primary/20'}
+      ${hasError ? 'border-error focus:ring-error/20' : 'focus:border-black focus:ring-black/20'}
       ${className}
     `;
 

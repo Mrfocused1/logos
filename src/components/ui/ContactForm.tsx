@@ -81,7 +81,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmit, className, i
           onClick={() => setShowForm(true)}
           variant="primary"
           size="lg"
-          className="w-full bg-black text-white hover:bg-white hover:!text-black hover:border-black border-2 border-black transition-all duration-300"
+          className="w-full bg-black text-white hover:bg-white hover:!text-black hover:border-black border-2 border-black transition-all duration-300 focus:ring-0 focus:ring-transparent focus:outline-none"
         >
           Contact Me
         </Button>
@@ -233,7 +233,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmit, className, i
           variant="primary"
           size="sm"
           disabled={isLoading}
-          className="flex-1 sm:size-lg py-2 sm:py-3 text-sm sm:text-base bg-black text-white hover:bg-white hover:text-black hover:border-black border-2 border-black transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 sm:size-lg py-2 sm:py-3 text-sm sm:text-base bg-black text-white hover:bg-white hover:text-black hover:border-black border-2 border-black transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-transparent focus:outline-none"
         >
           {isLoading ? 'Sending...' : 'Send Message'}
         </Button>

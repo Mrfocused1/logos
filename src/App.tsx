@@ -22,6 +22,7 @@ function App() {
           {/* Public routes */}
           <Route path="/" element={<LandingPage />} />
           <Route path="/invoice/create" element={<InvoiceCreatePage />} />
+          <Route path="/create" element={<InvoiceCreatePage />} />
           <Route path="/invoice/:slug" element={<InvoiceViewPage />} />
 
           {/* Admin routes */}
