@@ -48,7 +48,6 @@ export interface InvoiceFormData {
   clientAddress?: string;
   clientPhone?: string;
   paymentLink?: string;
-  customSlug?: string;
   dueDate: string;
   items: Omit<InvoiceItem, 'id' | 'total'>[];
   taxRate: number;

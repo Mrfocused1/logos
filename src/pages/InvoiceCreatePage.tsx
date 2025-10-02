@@ -9,7 +9,6 @@ import {
   createInvoiceFromForm,
   generateInvoiceUrl,
   validateEmail,
-  validateSlug,
   calculateDueDate,
   calculateItemTotal,
   formatCurrency
@@ -23,7 +22,6 @@ const InvoiceCreatePage: React.FC = () => {
     clientAddress: '',
     clientPhone: '',
     paymentLink: '',
-    customSlug: '',
     dueDate: calculateDueDate(30),
     items: [{ description: '', quantity: 1, unitPrice: 0 }],
     taxRate: 0,
@@ -53,10 +51,6 @@ const InvoiceCreatePage: React.FC = () => {
       newErrors.dueDate = 'Due date is required';
     }
 
-    // Custom slug validation
-    if (formData.customSlug && !validateSlug(formData.customSlug)) {
-      newErrors.customSlug = 'Slug must be 3-50 characters, lowercase letters, numbers, and hyphens only';
-    }
 
     // Items validation
     formData.items.forEach((item, index) => {
@@ -126,17 +120,19 @@ const InvoiceCreatePage: React.FC = () => {
     }
 
     const invoice = createInvoiceFromForm(formData, 'admin');
-    const invoiceUrl = generateInvoiceUrl(invoice.customSlug!);
+    const slug = invoice.customSlug!;
+    const invoiceUrl = generateInvoiceUrl(slug);
 
     // Store invoice data (in a real app, you would save to database here)
-    localStorage.setItem(`invoice-${invoice.customSlug}`, JSON.stringify(invoice));
+    localStorage.setItem(`invoice-${slug}`, JSON.stringify(invoice));
     console.log('Invoice created:', invoice);
+    console.log('Generated URL:', invoiceUrl);
 
-    showToast('Invoice created successfully!');
+    showToast(`Invoice created! URL: www.bolalogos.com/${slug}`);
     setGeneratedInvoice(invoice);
 
     // Navigate to invoice view
-    navigate(`/invoice/${invoice.customSlug}`);
+    navigate(`/invoice/${slug}`);
   };
 
   const copyInvoiceUrl = () => {
@@ -233,14 +229,22 @@ const InvoiceCreatePage: React.FC = () => {
                   error={errors.paymentLink}
                   helperText="Optional: Payment link for the client"
                 />
-                <Input
-                  label="Custom URL Slug"
-                  placeholder="my-client-invoice"
-                  value={formData.customSlug}
-                  onChange={(e) => setFormData(prev => ({ ...prev, customSlug: e.target.value }))}
-                  error={errors.customSlug}
-                  helperText="Optional: Create a custom URL for easy sharing"
-                />
+              </div>
+
+              {/* Dynamic URL Preview */}
+              {formData.clientName && (
+                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-xl">
+                  <p className="text-sm font-medium text-blue-800 mb-1">
+                    Generated Invoice URL:
+                  </p>
+                  <p className="text-sm text-blue-600 font-mono">
+                    www.bolalogos.com/{formData.clientName.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-') || 'client'}
+                  </p>
+                  <p className="text-xs text-blue-500 mt-1">
+                    This URL will be automatically generated from the client name
+                  </p>
+                </div>
+              )}
               </div>
             </GlassCard>
 

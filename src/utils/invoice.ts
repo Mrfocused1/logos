@@ -8,18 +8,22 @@ export const generateInvoiceNumber = (): string => {
   return `${prefix}-${timestamp}-${random}`;
 };
 
-// Generate URL-friendly slug
-export const generateSlug = (clientName: string, invoiceNumber: string): string => {
+// Generate URL-friendly slug from client name only
+export const generateSlug = (clientName: string): string => {
   const cleanName = clientName
     .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, '')
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '') // Remove leading/trailing dashes
     .trim();
 
-  const cleanNumber = invoiceNumber.toLowerCase().replace(/[^a-z0-9]/g, '');
+  // If the cleaned name is empty or too short, generate a fallback
+  if (!cleanName || cleanName.length < 2) {
+    return `client-${Date.now().toString().slice(-6)}`;
+  }
 
-  return `${cleanName}-${cleanNumber}`;
+  return cleanName;
 };
 
 // Validate custom slug
@@ -76,7 +80,7 @@ export const createInvoiceFromForm = (
   userId: string
 ): InvoiceData => {
   const invoiceNumber = generateInvoiceNumber();
-  const slug = formData.customSlug || generateSlug(formData.clientName, invoiceNumber);
+  const slug = generateSlug(formData.clientName);
 
   // Process items with IDs and totals
   const items: InvoiceItem[] = formData.items.map((item, index) => ({
