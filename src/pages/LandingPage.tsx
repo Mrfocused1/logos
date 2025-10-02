@@ -3,6 +3,8 @@ import { motion, LayoutGroup, useInView } from 'framer-motion';
 import { CheckCircle, Palette, Users, CreditCard, FileText, BookOpen } from 'lucide-react';
 import { emailService } from '../services/emailService';
 import type { ContactFormData } from '../components/ui/ContactForm';
+import { useToast } from '../hooks/useToast';
+import { ToastContainer } from '../components/ui/Toast';
 import {
   SlideButton,
   InteractiveHoverButton,
@@ -18,6 +20,9 @@ import {
 } from '../components/ui';
 
 const LandingPage: React.FC = () => {
+  const { toasts, success, error, removeToast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -342,18 +347,26 @@ const LandingPage: React.FC = () => {
 
                 {/* Contact Form */}
                 <ContactForm
+                  isLoading={isSubmitting}
                   onSubmit={async (data: ContactFormData) => {
+                    if (isSubmitting) return;
+
+                    setIsSubmitting(true);
                     console.log('Contact form submitted:', data);
 
                     try {
-                      // For now, use the mailto fallback method
-                      emailService.openMailto(data);
+                      const result = await emailService.sendContactForm(data);
 
-                      // Show success message (you can replace this with a toast notification)
-                      alert('Thank you! Your message has been prepared. Please send the email that just opened.');
-                    } catch (error) {
-                      console.error('Error sending email:', error);
-                      alert('Sorry, there was an error. Please try again or contact us directly at logosbola@gmail.com');
+                      if (result.success) {
+                        success(result.message);
+                      } else {
+                        error(result.message);
+                      }
+                    } catch (err) {
+                      console.error('Unexpected error:', err);
+                      error('Sorry, there was an unexpected error. Please try again or contact us directly at logosbola@gmail.com');
+                    } finally {
+                      setIsSubmitting(false);
                     }
                   }}
                   className="text-left"
@@ -391,6 +404,9 @@ const LandingPage: React.FC = () => {
           </p>
         </div>
       </footer>
+
+      {/* Toast Notifications */}
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </div>
   );
 };

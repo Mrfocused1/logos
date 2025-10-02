@@ -5,6 +5,7 @@ import { Button } from './Button';
 export interface ContactFormProps {
   onSubmit?: (data: ContactFormData) => void;
   className?: string;
+  isLoading?: boolean;
 }
 
 export interface ContactFormData {
@@ -15,7 +16,7 @@ export interface ContactFormData {
   logoFile?: File;
 }
 
-export const ContactForm: React.FC<ContactFormProps> = ({ onSubmit, className }) => {
+export const ContactForm: React.FC<ContactFormProps> = ({ onSubmit, className, isLoading = false }) => {
   const [formData, setFormData] = useState<ContactFormData>({
     name: '',
     email: '',
@@ -231,9 +232,10 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmit, className })
           type="submit"
           variant="primary"
           size="sm"
-          className="flex-1 sm:size-lg py-2 sm:py-3 text-sm sm:text-base bg-black text-white hover:bg-white hover:text-black hover:border-black border-2 border-black transition-all duration-300"
+          disabled={isLoading}
+          className="flex-1 sm:size-lg py-2 sm:py-3 text-sm sm:text-base bg-black text-white hover:bg-white hover:text-black hover:border-black border-2 border-black transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Send Message
+          {isLoading ? 'Sending...' : 'Send Message'}
         </Button>
       </div>
     </form>
