@@ -223,11 +223,11 @@ const InvoiceCreatePage: React.FC = () => {
                 />
                 <Input
                   label="Payment Link"
-                  placeholder="https://payment-link.com"
+                  placeholder="https://paypal.me/username/amount or https://your-payment-site.com"
                   value={formData.paymentLink}
                   onChange={(e) => setFormData(prev => ({ ...prev, paymentLink: e.target.value }))}
                   error={errors.paymentLink}
-                  helperText="Optional: Payment link for the client"
+                  helperText="Optional: Full payment URL (e.g., PayPal, Stripe, bank transfer page)"
                 />
               </div>
 
