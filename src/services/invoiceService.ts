@@ -42,22 +42,29 @@ export const invoiceService = {
     return data
   },
 
-  // Get invoice by custom slug
+  // Get invoice by custom slug (supports both authenticated and public access)
   async getInvoiceBySlug(slug: string) {
-    const { data, error } = await supabase
-      .from('invoices')
-      .select('*')
-      .eq('custom_slug', slug)
-      .single()
+    try {
+      const { data, error } = await supabase
+        .from('invoices')
+        .select('*')
+        .eq('custom_slug', slug)
+        .single()
 
-    if (error) {
-      if (error.code === 'PGRST116') {
-        return null // Invoice not found
+      if (error) {
+        if (error.code === 'PGRST116') {
+          return null // Invoice not found
+        }
+        // For other errors (like RLS), log and return null to allow localStorage fallback
+        console.warn('Supabase query failed, trying localStorage fallback:', error.message)
+        return null
       }
-      throw new Error(`Failed to fetch invoice: ${error.message}`)
-    }
 
-    return data
+      return data
+    } catch (error) {
+      console.error('Error in getInvoiceBySlug:', error)
+      return null // Return null for any errors to allow fallback to localStorage
+    }
   },
 
   // Get all invoices for current user

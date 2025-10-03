@@ -45,20 +45,26 @@ const InvoiceViewPage: React.FC = () => {
         }
 
         // First try to fetch invoice from Supabase by slug
+        console.log('Fetching invoice with slug:', slug);
         let invoiceData = await invoiceService.getInvoiceBySlug(slug);
+        console.log('Supabase result:', invoiceData);
 
         // If not found in Supabase, check localStorage
         if (!invoiceData) {
+          console.log('Invoice not found in Supabase, checking localStorage...');
           const storedInvoice = localStorage.getItem(`invoice-${slug}`);
           if (storedInvoice) {
             try {
               const localInvoice = JSON.parse(storedInvoice);
+              console.log('Found invoice in localStorage:', localInvoice);
               setInvoice(localInvoice);
               setLoading(false);
               return;
             } catch (error) {
               console.error('Error parsing localStorage invoice:', error);
             }
+          } else {
+            console.log('Invoice not found in localStorage either');
           }
         }
 
