@@ -138,5 +138,82 @@ export const invoiceService = {
     if (error) {
       throw new Error(`Failed to delete invoice: ${error.message}`)
     }
+  },
+
+  // Migration utility: Move localStorage invoices to Supabase
+  async migrateLocalStorageInvoices() {
+    const { data: user } = await supabase.auth.getUser()
+
+    if (!user.user) {
+      throw new Error('User not authenticated')
+    }
+
+    const migrationResults = {
+      found: 0,
+      migrated: 0,
+      skipped: 0,
+      errors: [] as string[]
+    }
+
+    try {
+      // Scan localStorage for invoice keys
+      const invoiceKeys = Object.keys(localStorage).filter(key => key.startsWith('invoice-'))
+      migrationResults.found = invoiceKeys.length
+
+      if (invoiceKeys.length === 0) {
+        return migrationResults
+      }
+
+      for (const key of invoiceKeys) {
+        try {
+          const invoiceData = localStorage.getItem(key)
+          if (!invoiceData) continue
+
+          const invoice = JSON.parse(invoiceData)
+
+          // Check if this invoice already exists in Supabase
+          const existingInvoice = await this.getInvoiceBySlug(invoice.customSlug)
+          if (existingInvoice) {
+            migrationResults.skipped++
+            continue
+          }
+
+          // Transform localStorage invoice to Supabase format
+          const { error } = await supabase
+            .from('invoices')
+            .insert({
+              user_id: user.user.id,
+              invoice_number: invoice.invoiceNumber,
+              custom_slug: invoice.customSlug,
+              client_name: invoice.clientName,
+              client_email: invoice.clientEmail,
+              client_address: invoice.clientAddress || null,
+              client_phone: invoice.clientPhone || null,
+              items: invoice.items || [],
+              subtotal: invoice.subtotal || 0,
+              total: invoice.total || 0,
+              payment_link: invoice.paymentLink || null,
+              status: invoice.status === 'paid' ? 'paid' : invoice.status === 'sent' ? 'pending' : 'unpaid',
+              due_date: invoice.dueDate || null
+            })
+            .select()
+            .single()
+
+          if (error) {
+            migrationResults.errors.push(`Failed to migrate ${invoice.customSlug}: ${error.message}`)
+          } else {
+            migrationResults.migrated++
+            // Optionally remove from localStorage after successful migration
+            // localStorage.removeItem(key)
+          }
+        } catch (error) {
+          migrationResults.errors.push(`Failed to parse invoice ${key}: ${error}`)
+        }
+      }
+
+      return migrationResults
+    } catch (error) {
+      throw new Error(`Migration failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
   }
 }

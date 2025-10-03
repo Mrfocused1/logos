@@ -424,6 +424,7 @@ const InvoiceCreatePage: React.FC = () => {
         {/* Toast */}
         {toastMessage && (
           <Toast
+            id="create-invoice-toast"
             message={toastMessage}
             type="success"
             onClose={() => setToastMessage('')}
