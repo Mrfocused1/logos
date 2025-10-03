@@ -19,12 +19,18 @@ export const invoiceService = {
         client_name: invoice.clientName,
         client_email: invoice.clientEmail,
         client_address: invoice.clientAddress || null,
+        client_phone: invoice.clientPhone || null,
+        issue_date: invoice.issueDate,
+        due_date: invoice.dueDate || null,
         items: invoice.items,
         subtotal: invoice.subtotal,
+        tax_rate: invoice.taxRate || 0,
+        tax_amount: invoice.taxAmount || 0,
         total: invoice.total,
+        notes: invoice.notes || null,
+        payment_terms: invoice.paymentTerms || null,
         payment_link: invoice.paymentLink || null,
-        status: 'unpaid',
-        due_date: invoice.dueDate || null
+        status: invoice.status === 'paid' ? 'paid' : 'unpaid'
       })
       .select()
       .single()

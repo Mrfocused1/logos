@@ -14,9 +14,11 @@ import {
   formatCurrency
 } from '../utils/invoice';
 import { invoiceService } from '../services/invoiceService';
+import { useAuth } from '../context/AuthContext';
 
 const InvoiceCreatePage: React.FC = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [formData, setFormData] = useState<InvoiceFormData>({
     clientName: '',
     clientEmail: '',
@@ -121,16 +123,21 @@ const InvoiceCreatePage: React.FC = () => {
     }
 
     try {
-      const invoice = createInvoiceFromForm(formData, 'admin');
+      const invoice = createInvoiceFromForm(formData, isAuthenticated ? 'admin' : 'public');
       const slug = invoice.customSlug!;
       const invoiceUrl = generateInvoiceUrl(slug);
 
-      // Save invoice to Supabase database
-      await invoiceService.createInvoice(invoice);
+      if (isAuthenticated) {
+        // Save invoice to Supabase database for admin users
+        await invoiceService.createInvoice(invoice);
+        console.log('Invoice saved to Supabase:', invoice);
+      } else {
+        // Save invoice to localStorage for public users (fallback)
+        localStorage.setItem(`invoice-${slug}`, JSON.stringify(invoice));
+        console.log('Invoice saved to localStorage:', invoice);
+      }
 
-      console.log('Invoice created:', invoice);
       console.log('Generated URL:', invoiceUrl);
-
       showToast(`Invoice created! URL: www.bolalogos.com/invoice/${slug}`);
       setGeneratedInvoice(invoice);
 

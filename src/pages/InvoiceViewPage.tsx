@@ -44,8 +44,23 @@ const InvoiceViewPage: React.FC = () => {
           return;
         }
 
-        // Fetch invoice from Supabase by slug
-        const invoiceData = await invoiceService.getInvoiceBySlug(slug);
+        // First try to fetch invoice from Supabase by slug
+        let invoiceData = await invoiceService.getInvoiceBySlug(slug);
+
+        // If not found in Supabase, check localStorage
+        if (!invoiceData) {
+          const storedInvoice = localStorage.getItem(`invoice-${slug}`);
+          if (storedInvoice) {
+            try {
+              const localInvoice = JSON.parse(storedInvoice);
+              setInvoice(localInvoice);
+              setLoading(false);
+              return;
+            } catch (error) {
+              console.error('Error parsing localStorage invoice:', error);
+            }
+          }
+        }
 
         if (invoiceData) {
           // Transform Supabase data to match InvoiceData interface
@@ -57,16 +72,16 @@ const InvoiceViewPage: React.FC = () => {
             clientEmail: invoiceData.client_email,
             clientAddress: invoiceData.client_address || undefined,
             clientPhone: invoiceData.client_phone || undefined,
-            issueDate: invoiceData.created_at.split('T')[0], // Use created_at as issue date
+            issueDate: invoiceData.issue_date ? invoiceData.issue_date.split('T')[0] : invoiceData.created_at.split('T')[0],
             dueDate: invoiceData.due_date || '',
             status: invoiceData.status === 'paid' ? 'paid' : invoiceData.status === 'pending' ? 'sent' : 'draft',
             items: invoiceData.items || [],
-            subtotal: invoiceData.subtotal,
-            taxRate: 0, // Default tax rate since not stored in DB
-            taxAmount: 0, // Default tax amount since not stored in DB
-            total: invoiceData.total,
-            notes: '',
-            paymentTerms: 'Payment due within 30 days',
+            subtotal: invoiceData.subtotal || 0,
+            taxRate: invoiceData.tax_rate || 0,
+            taxAmount: invoiceData.tax_amount || 0,
+            total: invoiceData.total || 0,
+            notes: invoiceData.notes || '',
+            paymentTerms: invoiceData.payment_terms || 'Payment due within 30 days',
             paymentLink: invoiceData.payment_link || undefined,
             createdAt: invoiceData.created_at,
             updatedAt: invoiceData.updated_at || invoiceData.created_at,
