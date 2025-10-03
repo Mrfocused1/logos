@@ -13,6 +13,7 @@ import {
   calculateItemTotal,
   formatCurrency
 } from '../utils/invoice';
+import { invoiceService } from '../services/invoiceService';
 
 const InvoiceCreatePage: React.FC = () => {
   const navigate = useNavigate();
@@ -113,26 +114,32 @@ const InvoiceCreatePage: React.FC = () => {
   };
 
 
-  const handleCreateInvoice = () => {
+  const handleCreateInvoice = async () => {
     if (!validateForm()) {
       showToast('Please fix the errors before creating the invoice');
       return;
     }
 
-    const invoice = createInvoiceFromForm(formData, 'admin');
-    const slug = invoice.customSlug!;
-    const invoiceUrl = generateInvoiceUrl(slug);
+    try {
+      const invoice = createInvoiceFromForm(formData, 'admin');
+      const slug = invoice.customSlug!;
+      const invoiceUrl = generateInvoiceUrl(slug);
 
-    // Store invoice data (in a real app, you would save to database here)
-    localStorage.setItem(`invoice-${slug}`, JSON.stringify(invoice));
-    console.log('Invoice created:', invoice);
-    console.log('Generated URL:', invoiceUrl);
+      // Save invoice to Supabase database
+      await invoiceService.createInvoice(invoice);
 
-    showToast(`Invoice created! URL: www.bolalogos.com/${slug}`);
-    setGeneratedInvoice(invoice);
+      console.log('Invoice created:', invoice);
+      console.log('Generated URL:', invoiceUrl);
 
-    // Navigate to invoice view
-    navigate(`/invoice/${slug}`);
+      showToast(`Invoice created! URL: www.bolalogos.com/invoice/${slug}`);
+      setGeneratedInvoice(invoice);
+
+      // Navigate to invoice view
+      navigate(`/invoice/${slug}`);
+    } catch (error) {
+      console.error('Error creating invoice:', error);
+      showToast('Failed to create invoice. Please try again.');
+    }
   };
 
   const copyInvoiceUrl = () => {

@@ -16,6 +16,7 @@ import { Button, GlassCard, Toast, InteractiveHoverButton, Squares } from '../co
 import type { InvoiceData } from '../types/invoice';
 import { formatCurrency, formatDate, isOverdue } from '../utils/invoice';
 import { INVOICE_STATUS_COLORS } from '../types/invoice';
+import { invoiceService } from '../services/invoiceService';
 
 const InvoiceViewPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -31,29 +32,55 @@ const InvoiceViewPage: React.FC = () => {
     setTimeout(() => setToastMessage(''), 3000);
   };
 
-  // Load invoice data from localStorage (in real app, fetch from API/database)
+  // Load invoice data from Supabase database
   useEffect(() => {
     const loadInvoice = async () => {
       setLoading(true);
 
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-
       try {
-        // Try to load real invoice data from localStorage
-        const storedInvoice = localStorage.getItem(`invoice-${slug}`);
+        if (!slug) {
+          setInvoice(null);
+          setLoading(false);
+          return;
+        }
 
-        if (storedInvoice) {
-          const invoiceData: InvoiceData = JSON.parse(storedInvoice);
-          setInvoice(invoiceData);
+        // Fetch invoice from Supabase by slug
+        const invoiceData = await invoiceService.getInvoiceBySlug(slug);
+
+        if (invoiceData) {
+          // Transform Supabase data to match InvoiceData interface
+          const transformedInvoice: InvoiceData = {
+            id: invoiceData.id,
+            invoiceNumber: invoiceData.invoice_number,
+            customSlug: invoiceData.custom_slug,
+            clientName: invoiceData.client_name,
+            clientEmail: invoiceData.client_email,
+            clientAddress: invoiceData.client_address || undefined,
+            clientPhone: invoiceData.client_phone || undefined,
+            issueDate: invoiceData.created_at.split('T')[0], // Use created_at as issue date
+            dueDate: invoiceData.due_date || '',
+            status: invoiceData.status === 'paid' ? 'paid' : invoiceData.status === 'pending' ? 'sent' : 'draft',
+            items: invoiceData.items || [],
+            subtotal: invoiceData.subtotal,
+            taxRate: 0, // Default tax rate since not stored in DB
+            taxAmount: 0, // Default tax amount since not stored in DB
+            total: invoiceData.total,
+            notes: '',
+            paymentTerms: 'Payment due within 30 days',
+            paymentLink: invoiceData.payment_link || undefined,
+            createdAt: invoiceData.created_at,
+            updatedAt: invoiceData.updated_at || invoiceData.created_at,
+            createdBy: invoiceData.user_id
+          };
+          setInvoice(transformedInvoice);
         } else {
-          // Fallback to mock data if no real invoice found
+          // Fallback to mock data if no real invoice found (for development/demo)
           const mockInvoice: InvoiceData = {
-            id: 'invoice-123',
-            invoiceNumber: 'BL-202501-001',
-            customSlug: slug || 'sample-invoice',
-            clientName: 'Sample Client Ltd.',
-            clientEmail: 'client@example.com',
+            id: 'demo-invoice',
+            invoiceNumber: 'BL-202501-DEMO',
+            customSlug: slug,
+            clientName: 'Demo Client Ltd.',
+            clientEmail: 'demo@example.com',
             clientAddress: '123 Business Street\nLondon, SW1A 1AA\nUnited Kingdom',
             clientPhone: '+44 20 7946 0958',
             issueDate: '2025-01-15',
@@ -79,26 +106,56 @@ const InvoiceViewPage: React.FC = () => {
             taxRate: 20,
             taxAmount: 180.00,
             total: 1080.00,
-            notes: 'Thank you for choosing BOLA LOGOS for your design needs.',
+            notes: 'Thank you for choosing BOLA LOGOS for your design needs. This is a demo invoice.',
             paymentTerms: 'Payment due within 30 days',
             paymentLink: 'https://paypal.me/bolalogos/1080',
             createdAt: '2025-01-15T10:00:00Z',
             updatedAt: '2025-01-15T10:00:00Z',
-            createdBy: 'admin'
+            createdBy: 'demo'
           };
           setInvoice(mockInvoice);
         }
       } catch (error) {
         console.error('Error loading invoice:', error);
-        setInvoice(null);
+        // Still show mock data on error for development
+        const mockInvoice: InvoiceData = {
+          id: 'error-fallback',
+          invoiceNumber: 'BL-202501-FALLBACK',
+          customSlug: slug || 'error-invoice',
+          clientName: 'Sample Client Ltd.',
+          clientEmail: 'client@example.com',
+          clientAddress: '123 Business Street\nLondon, SW1A 1AA\nUnited Kingdom',
+          clientPhone: '+44 20 7946 0958',
+          issueDate: '2025-01-15',
+          dueDate: '2025-02-14',
+          status: 'sent',
+          items: [
+            {
+              id: 'item-1',
+              description: 'Logo Design & Brand Identity Package',
+              quantity: 1,
+              unitPrice: 750.00,
+              total: 750.00
+            }
+          ],
+          subtotal: 750.00,
+          taxRate: 20,
+          taxAmount: 150.00,
+          total: 900.00,
+          notes: 'Sample invoice - there was an error loading the real invoice data.',
+          paymentTerms: 'Payment due within 30 days',
+          paymentLink: undefined,
+          createdAt: '2025-01-15T10:00:00Z',
+          updatedAt: '2025-01-15T10:00:00Z',
+          createdBy: 'fallback'
+        };
+        setInvoice(mockInvoice);
       }
 
       setLoading(false);
     };
 
-    if (slug) {
-      loadInvoice();
-    }
+    loadInvoice();
   }, [slug]);
 
   const copyInvoiceUrl = () => {
@@ -380,6 +437,7 @@ const InvoiceViewPage: React.FC = () => {
         {/* Toast */}
         {toastMessage && (
           <Toast
+            id="invoice-toast"
             message={toastMessage}
             type="success"
             onClose={() => setToastMessage('')}
