@@ -201,7 +201,7 @@ export const invoiceService = {
               client_name: invoice.clientName,
               client_email: invoice.clientEmail,
               client_address: invoice.clientAddress || null,
-              client_phone: invoice.clientPhone || null,
+              // client_phone: invoice.clientPhone || null, // Temporarily disabled - column missing in DB
               items: invoice.items || [],
               subtotal: invoice.subtotal || 0,
               total: invoice.total || 0,
