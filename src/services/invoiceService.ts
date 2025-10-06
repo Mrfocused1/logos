@@ -19,16 +19,16 @@ export const invoiceService = {
         client_name: invoice.clientName,
         client_email: invoice.clientEmail,
         client_address: invoice.clientAddress || null,
-        client_phone: invoice.clientPhone || null,
-        issue_date: invoice.issueDate,
+        // client_phone: invoice.clientPhone || null, // Temporarily disabled - column missing in DB
+        // issue_date: invoice.issueDate, // Temporarily disabled - column missing in DB
         due_date: invoice.dueDate || null,
         items: invoice.items,
         subtotal: invoice.subtotal,
-        tax_rate: invoice.taxRate || 0,
-        tax_amount: invoice.taxAmount || 0,
+        // tax_rate: invoice.taxRate || 0, // Temporarily disabled - column missing in DB
+        // tax_amount: invoice.taxAmount || 0, // Temporarily disabled - column missing in DB
         total: invoice.total,
-        notes: invoice.notes || null,
-        payment_terms: invoice.paymentTerms || null,
+        // notes: invoice.notes || null, // Temporarily disabled - column missing in DB
+        // payment_terms: invoice.paymentTerms || null, // Temporarily disabled - column missing in DB
         payment_link: invoice.paymentLink || null,
         status: invoice.status === 'paid' ? 'paid' : 'unpaid'
       })
