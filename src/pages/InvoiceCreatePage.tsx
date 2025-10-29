@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, FileText, Plus, Trash2, Copy, Check } from 'lucide-react';
+import { ArrowLeft, FileText, Plus, Trash2, Copy, Check, AlertCircle } from 'lucide-react';
 import { Button, GlassCard, Input, Toast, Squares } from '../components/ui';
 import type { InvoiceFormData } from '../types/invoice';
 import { DEFAULT_PAYMENT_TERMS } from '../types/invoice';
@@ -19,6 +19,10 @@ import { useAuth } from '../context/AuthContext';
 const InvoiceCreatePage: React.FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const clientInfoRef = useRef<HTMLDivElement>(null);
+  const invoiceDetailsRef = useRef<HTMLDivElement>(null);
+  const invoiceItemsRef = useRef<HTMLDivElement>(null);
+
   const [formData, setFormData] = useState<InvoiceFormData>({
     clientName: '',
     clientEmail: '',
@@ -36,13 +40,51 @@ const InvoiceCreatePage: React.FC = () => {
   const [generatedInvoice, setGeneratedInvoice] = useState<any>(null);
   const [copySuccess, setCopySuccess] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const [showErrorSummary, setShowErrorSummary] = useState(false);
 
   const showToast = (message: string) => {
     setToastMessage(message);
     setTimeout(() => setToastMessage(''), 3000);
   };
 
-  const validateForm = (): boolean => {
+  const getErrorSummary = (errors: Record<string, string>): string[] => {
+    const errorMessages: string[] = [];
+
+    if (errors.clientName) errorMessages.push('Client name is required');
+    if (errors.dueDate) errorMessages.push('Due date is required');
+
+    // Check for item errors
+    const itemErrors = Object.keys(errors).filter(key => key.startsWith('item-'));
+    if (itemErrors.length > 0) {
+      const itemNumbers = new Set(itemErrors.map(key => {
+        const match = key.match(/item-(\d+)-/);
+        return match ? parseInt(match[1]) + 1 : 0;
+      }));
+      itemNumbers.forEach(num => {
+        if (num > 0) errorMessages.push(`Item ${num} has missing or invalid fields`);
+      });
+    }
+
+    if (errors.items) errorMessages.push('At least one item is required');
+
+    return errorMessages;
+  };
+
+  const scrollToFirstError = (errors: Record<string, string>) => {
+    const errorKeys = Object.keys(errors);
+    if (errorKeys.length === 0) return;
+
+    // Determine which section has the first error
+    if (errors.clientName) {
+      clientInfoRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else if (errors.dueDate) {
+      invoiceDetailsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else if (errorKeys.some(key => key.startsWith('item-') || key === 'items')) {
+      invoiceItemsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
+
+  const validateForm = (): { isValid: boolean; errors: Record<string, string> } => {
     const newErrors: Record<string, string> = {};
 
     // Required fields
@@ -74,7 +116,10 @@ const InvoiceCreatePage: React.FC = () => {
     }
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return {
+      isValid: Object.keys(newErrors).length === 0,
+      errors: newErrors
+    };
   };
 
   const addItem = () => {
@@ -117,10 +162,16 @@ const InvoiceCreatePage: React.FC = () => {
 
 
   const handleCreateInvoice = async () => {
-    if (!validateForm()) {
-      showToast('Please fix the errors before creating the invoice');
+    const validation = validateForm();
+    if (!validation.isValid) {
+      setShowErrorSummary(true);
+      scrollToFirstError(validation.errors);
+      const errorSummary = getErrorSummary(validation.errors);
+      showToast(`Please fix ${errorSummary.length} error${errorSummary.length > 1 ? 's' : ''} before creating the invoice`);
       return;
     }
+
+    setShowErrorSummary(false);
 
     try {
       const invoice = createInvoiceFromForm(formData, isAuthenticated ? 'admin' : 'public');
@@ -159,7 +210,7 @@ const InvoiceCreatePage: React.FC = () => {
     }
   };
 
-  const { subtotal, taxAmount, total } = calculateTotals();
+  const { subtotal, total } = calculateTotals();
 
   return (
     <div className="min-h-screen bg-white text-gray-900 relative overflow-hidden px-4 py-12">
@@ -224,8 +275,9 @@ const InvoiceCreatePage: React.FC = () => {
             className="lg:col-span-2 space-y-8"
           >
             {/* Client Information */}
-            <GlassCard className="p-6 bg-white/90 backdrop-blur-sm border border-gray-200">
-              <h2 className="text-xl font-semibold text-black mb-4">Client Information</h2>
+            <div ref={clientInfoRef}>
+              <GlassCard className="p-6 bg-white/90 backdrop-blur-sm border border-gray-200">
+                <h2 className="text-xl font-semibold text-black mb-4">Client Information</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input
                   label="Client Name"
@@ -259,10 +311,12 @@ const InvoiceCreatePage: React.FC = () => {
                   </p>
                 </div>
               )}
-            </GlassCard>
+              </GlassCard>
+            </div>
 
             {/* Invoice Details */}
-            <GlassCard className="p-6 bg-white/90 backdrop-blur-sm border border-gray-200">
+            <div ref={invoiceDetailsRef}>
+              <GlassCard className="p-6 bg-white/90 backdrop-blur-sm border border-gray-200">
               <h2 className="text-xl font-semibold text-black mb-4">Invoice Details</h2>
               <div className="grid grid-cols-1 gap-4">
                 <Input
@@ -274,10 +328,12 @@ const InvoiceCreatePage: React.FC = () => {
                   required
                 />
               </div>
-            </GlassCard>
+              </GlassCard>
+            </div>
 
             {/* Invoice Items */}
-            <GlassCard className="p-6 bg-white/90 backdrop-blur-sm border border-gray-200">
+            <div ref={invoiceItemsRef}>
+              <GlassCard className="p-6 bg-white/90 backdrop-blur-sm border border-gray-200">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold text-black">Invoice Items</h2>
                 <Button
@@ -309,7 +365,7 @@ const InvoiceCreatePage: React.FC = () => {
                         label="Qty"
                         type="number"
                         min="1"
-                        value={item.quantity}
+                        value={String(item.quantity)}
                         onChange={(e) => updateItem(index, 'quantity', parseInt(e.target.value) || 1)}
                         error={errors[`item-${index}-quantity`]}
                         size="sm"
@@ -321,7 +377,7 @@ const InvoiceCreatePage: React.FC = () => {
                         type="number"
                         min="0"
                         step="0.01"
-                        value={item.unitPrice}
+                        value={String(item.unitPrice)}
                         onChange={(e) => updateItem(index, 'unitPrice', parseFloat(e.target.value) || 0)}
                         error={errors[`item-${index}-unitPrice`]}
                         size="sm"
@@ -346,7 +402,8 @@ const InvoiceCreatePage: React.FC = () => {
                   </div>
                 ))}
               </div>
-            </GlassCard>
+              </GlassCard>
+            </div>
 
             {/* Additional Information */}
             <GlassCard className="p-6 bg-white/90 backdrop-blur-sm border border-gray-200">
@@ -389,6 +446,32 @@ const InvoiceCreatePage: React.FC = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Error Summary */}
+              {showErrorSummary && Object.keys(errors).length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl"
+                >
+                  <div className="flex items-start gap-2">
+                    <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-red-800 mb-2">
+                        Please fix the following errors:
+                      </p>
+                      <ul className="text-xs text-red-700 space-y-1">
+                        {getErrorSummary(errors).map((error, index) => (
+                          <li key={index} className="flex items-start gap-1">
+                            <span className="text-red-500 mt-0.5">•</span>
+                            <span>{error}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
 
               <div className="mt-6">
                 <Button
