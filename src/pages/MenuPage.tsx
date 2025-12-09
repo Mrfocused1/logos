@@ -47,7 +47,7 @@ const MenuPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 relative overflow-hidden">
+    <div className="min-h-screen bg-white text-gray-900 relative overflow-hidden flex flex-col">
       {/* Animated Grid Background */}
       <div className="fixed inset-0 z-0">
         <Squares
@@ -59,20 +59,23 @@ const MenuPage: React.FC = () => {
         />
       </div>
 
-      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 py-12">
-        {/* Logo/Brand */}
+      {/* Header - Fixed at top */}
+      <header className="relative z-10 w-full py-6 px-4 border-b border-gray-100 bg-white/80 backdrop-blur-sm">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-10"
+          className="text-center"
         >
-          <h1 className="text-4xl sm:text-5xl font-bold font-heading text-black mb-2">
-            BOLA LOGOS
+          <h1 className="text-3xl sm:text-4xl font-bold font-heading text-black mb-1">
+            Website Samples Below
           </h1>
-          <p className="text-gray-600 text-lg">Inspiring Visual Storytelling</p>
+          <p className="text-gray-600 text-base">Inspiring Visual Storytelling</p>
         </motion.div>
+      </header>
 
+      {/* Main Content - Grows to fill space */}
+      <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 py-8">
         {/* Links Container */}
         <motion.div
           className="w-full max-w-md space-y-4"
@@ -113,19 +116,21 @@ const MenuPage: React.FC = () => {
             ))
           )}
         </motion.div>
+      </main>
 
-        {/* Footer */}
+      {/* Footer - Pinned to bottom */}
+      <footer className="relative z-10 w-full py-4 px-4 border-t border-gray-100 bg-white/80 backdrop-blur-sm">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8, duration: 0.6 }}
-          className="mt-12 text-center"
+          className="text-center"
         >
           <p className="text-sm text-gray-500">
             © 2025 BOLA LOGOS. All rights reserved.
           </p>
         </motion.div>
-      </div>
+      </footer>
     </div>
   );
 };
