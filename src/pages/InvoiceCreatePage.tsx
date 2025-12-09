@@ -29,7 +29,7 @@ const InvoiceCreatePage: React.FC = () => {
     clientAddress: '',
     clientPhone: '',
     paymentLink: '',
-    dueDate: calculateDueDate(30),
+    dueDate: new Date().toISOString().split('T')[0],
     items: [{ description: '', quantity: 1, unitPrice: 0 }],
     taxRate: 0,
     notes: '',
