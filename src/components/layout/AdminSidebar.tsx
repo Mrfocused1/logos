@@ -7,7 +7,8 @@ import {
   FileText,
   LogOut,
   Sparkles,
-  X
+  X,
+  Link
 } from 'lucide-react';
 
 interface AdminSidebarProps {
@@ -29,6 +30,11 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen, onClose }) => {
       name: 'Invoices',
       href: '/admin/invoices',
       icon: FileText,
+    },
+    {
+      name: 'Menu Links',
+      href: '/admin/menu-links',
+      icon: Link,
     },
   ];
 

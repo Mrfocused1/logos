@@ -6,6 +6,7 @@ import DashboardPage from './pages/admin/DashboardPage';
 import LandingPage from './pages/LandingPage';
 import InvoiceCreatePage from './pages/InvoiceCreatePage';
 import InvoiceViewPage from './pages/InvoiceViewPage';
+import MenuPage from './pages/MenuPage';
 // Temporary import for admin user creation - remove after setup
 import { createAdminUser } from './utils/createAdmin';
 
@@ -24,6 +25,7 @@ function App() {
           <Route path="/invoice/create" element={<InvoiceCreatePage />} />
           <Route path="/create" element={<InvoiceCreatePage />} />
           <Route path="/invoice/:slug" element={<InvoiceViewPage />} />
+          <Route path="/menu" element={<MenuPage />} />
 
           {/* Admin routes */}
           <Route path="/admin/login" element={<LoginPage />} />

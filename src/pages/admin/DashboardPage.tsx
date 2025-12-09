@@ -3,8 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import AdminLayout from '../../components/layout/AdminLayout';
 import DashboardHome from './DashboardHome';
 import InvoicesPage from './InvoicesPage';
-// Import other admin pages when created
-// import TestimonialsPage from './TestimonialsPage';
+import MenuLinksPage from './MenuLinksPage';
 
 const DashboardPage: React.FC = () => {
   return (
@@ -13,8 +12,7 @@ const DashboardPage: React.FC = () => {
         <Route index element={<DashboardHome />} />
         <Route path="dashboard" element={<DashboardHome />} />
         <Route path="invoices" element={<InvoicesPage />} />
-        {/* Future routes will be added here */}
-        {/* <Route path="testimonials" element={<TestimonialsPage />} /> */}
+        <Route path="menu-links" element={<MenuLinksPage />} />
       </Routes>
     </AdminLayout>
   );
