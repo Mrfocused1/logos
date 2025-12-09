@@ -163,29 +163,29 @@ const MenuLinksPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Menu Links</h1>
-          <p className="text-gray-600 mt-1">Manage your linktree-style menu at /menu</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Menu Links</h1>
+          <p className="text-sm sm:text-base text-gray-600 mt-1">Manage your linktree-style menu at /menu</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-2 sm:gap-3">
           <Button
             variant="ghost"
             onClick={() => window.open('/menu', '_blank')}
-            className="gap-2 border border-gray-300"
+            className="flex-1 sm:flex-none gap-1.5 sm:gap-2 border border-gray-300 text-sm sm:text-base px-3 sm:px-4 py-2"
           >
-            <ExternalLink size={18} />
-            View Menu
+            <ExternalLink size={16} className="sm:w-[18px] sm:h-[18px]" />
+            <span>View Menu</span>
           </Button>
           <Button
             variant="primary"
             onClick={() => setShowAddForm(true)}
-            className="gap-2 bg-black text-white hover:bg-gray-800"
+            className="flex-1 sm:flex-none gap-1.5 sm:gap-2 bg-black text-white hover:bg-gray-800 text-sm sm:text-base px-3 sm:px-4 py-2"
           >
-            <Plus size={18} />
-            Add Link
+            <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
+            <span>Add Link</span>
           </Button>
         </div>
       </div>
@@ -257,7 +257,7 @@ const MenuLinksPage: React.FC = () => {
       )}
 
       {/* Links List */}
-      <GlassCard className="p-6 bg-white border border-gray-200">
+      <GlassCard className="p-4 sm:p-6 bg-white border border-gray-200">
         {loading ? (
           <div className="text-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black mx-auto"></div>
@@ -282,32 +282,32 @@ const MenuLinksPage: React.FC = () => {
                 key={link.id}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className={`flex items-center gap-4 p-4 rounded-xl border ${
+                className={`flex items-center gap-2 sm:gap-4 p-3 sm:p-4 rounded-xl border ${
                   link.is_active ? 'bg-white border-gray-200' : 'bg-gray-50 border-gray-200 opacity-60'
                 }`}
               >
                 {/* Reorder Buttons */}
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-0.5 sm:gap-1">
                   <button
                     onClick={() => moveLink(index, 'up')}
                     disabled={index === 0}
-                    className="p-1 hover:bg-gray-100 rounded disabled:opacity-30"
+                    className="p-0.5 sm:p-1 hover:bg-gray-100 rounded disabled:opacity-30"
                   >
-                    <GripVertical size={16} className="rotate-180" />
+                    <GripVertical size={14} className="sm:w-4 sm:h-4 rotate-180" />
                   </button>
                   <button
                     onClick={() => moveLink(index, 'down')}
                     disabled={index === links.length - 1}
-                    className="p-1 hover:bg-gray-100 rounded disabled:opacity-30"
+                    className="p-0.5 sm:p-1 hover:bg-gray-100 rounded disabled:opacity-30"
                   >
-                    <GripVertical size={16} />
+                    <GripVertical size={14} className="sm:w-4 sm:h-4" />
                   </button>
                 </div>
 
                 {/* Link Content */}
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   {editingId === link.id ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3">
                       <Input
                         placeholder="Title"
                         value={editData.title}
@@ -322,13 +322,13 @@ const MenuLinksPage: React.FC = () => {
                       />
                     </div>
                   ) : (
-                    <div>
-                      <h4 className="font-semibold text-gray-900">{link.title}</h4>
+                    <div className="min-w-0">
+                      <h4 className="font-semibold text-gray-900 text-sm sm:text-base">{link.title}</h4>
                       <a
                         href={link.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm text-blue-600 hover:underline truncate block max-w-md"
+                        className="text-xs sm:text-sm text-blue-600 hover:underline truncate block"
                       >
                         {link.url}
                       </a>
@@ -337,7 +337,7 @@ const MenuLinksPage: React.FC = () => {
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
                   {editingId === link.id ? (
                     <>
                       <Button
@@ -345,17 +345,17 @@ const MenuLinksPage: React.FC = () => {
                         size="sm"
                         onClick={() => handleUpdateLink(link.id)}
                         disabled={saving}
-                        className="text-green-600 hover:bg-green-50"
+                        className="text-green-600 hover:bg-green-50 p-1.5 sm:p-2"
                       >
-                        <Save size={18} />
+                        <Save size={16} className="sm:w-[18px] sm:h-[18px]" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={cancelEditing}
-                        className="text-gray-600 hover:bg-gray-100"
+                        className="text-gray-600 hover:bg-gray-100 p-1.5 sm:p-2"
                       >
-                        <X size={18} />
+                        <X size={16} className="sm:w-[18px] sm:h-[18px]" />
                       </Button>
                     </>
                   ) : (
@@ -364,26 +364,26 @@ const MenuLinksPage: React.FC = () => {
                         variant="ghost"
                         size="sm"
                         onClick={() => handleToggleActive(link)}
-                        className={link.is_active ? 'text-green-600 hover:bg-green-50' : 'text-gray-400 hover:bg-gray-100'}
+                        className={`p-1.5 sm:p-2 ${link.is_active ? 'text-green-600 hover:bg-green-50' : 'text-gray-400 hover:bg-gray-100'}`}
                         title={link.is_active ? 'Hide link' : 'Show link'}
                       >
-                        {link.is_active ? <Eye size={18} /> : <EyeOff size={18} />}
+                        {link.is_active ? <Eye size={16} className="sm:w-[18px] sm:h-[18px]" /> : <EyeOff size={16} className="sm:w-[18px] sm:h-[18px]" />}
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => startEditing(link)}
-                        className="text-blue-600 hover:bg-blue-50"
+                        className="text-blue-600 hover:bg-blue-50 p-1.5 sm:p-2"
                       >
-                        <Edit2 size={18} />
+                        <Edit2 size={16} className="sm:w-[18px] sm:h-[18px]" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => handleDeleteLink(link.id)}
-                        className="text-red-600 hover:bg-red-50"
+                        className="text-red-600 hover:bg-red-50 p-1.5 sm:p-2"
                       >
-                        <Trash2 size={18} />
+                        <Trash2 size={16} className="sm:w-[18px] sm:h-[18px]" />
                       </Button>
                     </>
                   )}
