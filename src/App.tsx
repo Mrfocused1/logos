@@ -25,7 +25,7 @@ function App() {
           <Route path="/invoice/create" element={<InvoiceCreatePage />} />
           <Route path="/create" element={<InvoiceCreatePage />} />
           <Route path="/invoice/:slug" element={<InvoiceViewPage />} />
-          <Route path="/menu" element={<MenuPage />} />
+          <Route path="/websites" element={<MenuPage />} />
 
           {/* Admin routes */}
           <Route path="/admin/login" element={<LoginPage />} />

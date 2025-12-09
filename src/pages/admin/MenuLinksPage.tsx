@@ -168,12 +168,12 @@ const MenuLinksPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Menu Links</h1>
-          <p className="text-sm sm:text-base text-gray-600 mt-1">Manage your linktree-style menu at /menu</p>
+          <p className="text-sm sm:text-base text-gray-600 mt-1">Manage your linktree-style menu at /websites</p>
         </div>
         <div className="flex gap-2 sm:gap-3">
           <Button
             variant="ghost"
-            onClick={() => window.open('/menu', '_blank')}
+            onClick={() => window.open('/websites', '_blank')}
             className="flex-1 sm:flex-none gap-1.5 sm:gap-2 border border-gray-300 text-sm sm:text-base px-3 sm:px-4 py-2"
           >
             <ExternalLink size={16} className="sm:w-[18px] sm:h-[18px]" />
