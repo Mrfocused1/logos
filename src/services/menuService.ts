@@ -24,6 +24,15 @@ export interface UpdateMenuLinkData {
   is_active?: boolean;
 }
 
+// Helper to ensure URL has a protocol
+const ensureProtocol = (url: string): string => {
+  if (!url) return url;
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url;
+  }
+  return `https://${url}`;
+};
+
 export const menuService = {
   // Get all active links (public)
   async getActiveLinks(): Promise<MenuLink[]> {
@@ -62,6 +71,7 @@ export const menuService = {
       .from('menu_links')
       .insert([{
         ...linkData,
+        url: ensureProtocol(linkData.url),
         display_order: linkData.display_order ?? 0,
         is_active: linkData.is_active ?? true
       }])
@@ -78,12 +88,16 @@ export const menuService = {
 
   // Update a link
   async updateLink(id: string, linkData: UpdateMenuLinkData): Promise<MenuLink> {
+    const updateData = {
+      ...linkData,
+      updated_at: new Date().toISOString()
+    };
+    if (linkData.url) {
+      updateData.url = ensureProtocol(linkData.url);
+    }
     const { data, error } = await supabase
       .from('menu_links')
-      .update({
-        ...linkData,
-        updated_at: new Date().toISOString()
-      })
+      .update(updateData)
       .eq('id', id)
       .select()
       .single();
