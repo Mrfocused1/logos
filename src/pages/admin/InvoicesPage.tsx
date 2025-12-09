@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -23,90 +23,61 @@ import { Button, GlassCard, Input, Squares, InteractiveHoverButton } from '../..
 import type { InvoiceData } from '../../types/invoice';
 import { formatCurrency, formatDate, isOverdue, generateInvoiceUrl } from '../../utils/invoice';
 import { INVOICE_STATUS_COLORS } from '../../types/invoice';
+import { invoiceService } from '../../services/invoiceService';
 
 const InvoicesPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'date' | 'amount' | 'client'>('date');
+  const [invoices, setInvoices] = useState<InvoiceData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock invoice data - in real app, fetch from API/database
-  const mockInvoices: InvoiceData[] = [
-    {
-      id: 'invoice-1',
-      invoiceNumber: 'BL-202501-001',
-      customSlug: 'acme-corp-logo-design',
-      clientName: 'Acme Corporation',
-      clientEmail: 'contact@acme-corp.com',
-      issueDate: '2025-01-15',
-      dueDate: '2025-02-14',
-      status: 'sent',
-      items: [],
-      subtotal: 750.00,
-      taxRate: 20,
-      taxAmount: 150.00,
-      total: 900.00,
-      createdAt: '2025-01-15T10:00:00Z',
-      updatedAt: '2025-01-15T10:00:00Z',
-      createdBy: 'admin'
-    },
-    {
-      id: 'invoice-2',
-      invoiceNumber: 'BL-202501-002',
-      customSlug: 'tech-startup-branding',
-      clientName: 'TechStart Solutions',
-      clientEmail: 'hello@techstart.io',
-      issueDate: '2025-01-10',
-      dueDate: '2025-01-25',
-      status: 'overdue',
-      items: [],
-      subtotal: 1200.00,
-      taxRate: 20,
-      taxAmount: 240.00,
-      total: 1440.00,
-      createdAt: '2025-01-10T14:30:00Z',
-      updatedAt: '2025-01-10T14:30:00Z',
-      createdBy: 'admin'
-    },
-    {
-      id: 'invoice-3',
-      invoiceNumber: 'BL-202501-003',
-      customSlug: 'local-bakery-package',
-      clientName: 'Sweet Dreams Bakery',
-      clientEmail: 'orders@sweetdreams.co.uk',
-      issueDate: '2025-01-12',
-      dueDate: '2025-02-11',
-      status: 'paid',
-      items: [],
-      subtotal: 450.00,
-      taxRate: 20,
-      taxAmount: 90.00,
-      total: 540.00,
-      createdAt: '2025-01-12T09:15:00Z',
-      updatedAt: '2025-01-20T16:45:00Z',
-      createdBy: 'admin'
-    },
-    {
-      id: 'invoice-4',
-      invoiceNumber: 'BL-202501-004',
-      customSlug: 'consulting-firm-rebrand',
-      clientName: 'Strategic Consulting Ltd',
-      clientEmail: 'admin@strategic.consulting',
-      issueDate: '2025-01-18',
-      dueDate: '2025-02-17',
-      status: 'draft',
-      items: [],
-      subtotal: 2500.00,
-      taxRate: 20,
-      taxAmount: 500.00,
-      total: 3000.00,
-      createdAt: '2025-01-18T11:20:00Z',
-      updatedAt: '2025-01-18T11:20:00Z',
-      createdBy: 'admin'
-    }
-  ];
+  // Fetch real invoices from Supabase
+  useEffect(() => {
+    const fetchInvoices = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await invoiceService.getInvoices();
 
-  const [invoices] = useState<InvoiceData[]>(mockInvoices);
+        // Transform Supabase data to match InvoiceData interface
+        const transformedInvoices: InvoiceData[] = data.map((inv: any) => ({
+          id: inv.id,
+          invoiceNumber: inv.invoice_number,
+          customSlug: inv.custom_slug,
+          clientName: inv.client_name,
+          clientEmail: inv.client_email,
+          clientAddress: inv.client_address || undefined,
+          clientPhone: inv.client_phone || undefined,
+          issueDate: inv.issue_date ? inv.issue_date.split('T')[0] : inv.created_at.split('T')[0],
+          dueDate: inv.due_date || '',
+          status: inv.status === 'paid' ? 'paid' : inv.status === 'pending' ? 'sent' : 'draft',
+          items: inv.items || [],
+          subtotal: inv.subtotal || 0,
+          taxRate: inv.tax_rate || 0,
+          taxAmount: inv.tax_amount || 0,
+          total: inv.total || 0,
+          notes: inv.notes || '',
+          paymentTerms: inv.payment_terms || 'Payment due within 30 days',
+          paymentLink: inv.payment_link || undefined,
+          createdAt: inv.created_at,
+          updatedAt: inv.updated_at || inv.created_at,
+          createdBy: inv.user_id
+        }));
+
+        setInvoices(transformedInvoices);
+      } catch (err) {
+        console.error('Error fetching invoices:', err);
+        setError(err instanceof Error ? err.message : 'Failed to fetch invoices');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInvoices();
+  }, []);
 
   // Filter and sort invoices
   const filteredInvoices = invoices
@@ -187,6 +158,60 @@ const InvoicesPage: React.FC = () => {
       transition: { duration: 0.6, ease: "easeOut" }
     },
   };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="relative">
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          <Squares
+            direction="diagonal"
+            speed={0.3}
+            borderColor="rgba(0, 0, 0, 0.025)"
+            squareSize={40}
+            hoverFillColor="rgba(0, 0, 0, 0.015)"
+          />
+        </div>
+        <div className="relative z-10 flex items-center justify-center min-h-[400px]">
+          <GlassCard className="p-8 text-center bg-white/90 backdrop-blur-sm border border-gray-200">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading invoices...</p>
+          </GlassCard>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="relative">
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          <Squares
+            direction="diagonal"
+            speed={0.3}
+            borderColor="rgba(0, 0, 0, 0.025)"
+            squareSize={40}
+            hoverFillColor="rgba(0, 0, 0, 0.015)"
+          />
+        </div>
+        <div className="relative z-10 flex items-center justify-center min-h-[400px]">
+          <GlassCard className="p-8 text-center max-w-md bg-white/90 backdrop-blur-sm border border-gray-200">
+            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <AlertCircle className="w-8 h-8 text-red-600" />
+            </div>
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Failed to Load Invoices</h2>
+            <p className="text-gray-600 mb-6">{error}</p>
+            <InteractiveHoverButton
+              text="Try Again"
+              onClick={() => window.location.reload()}
+              className="w-32 h-10 text-black border-black"
+            />
+          </GlassCard>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative">

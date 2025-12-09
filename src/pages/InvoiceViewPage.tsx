@@ -95,82 +95,14 @@ const InvoiceViewPage: React.FC = () => {
           };
           setInvoice(transformedInvoice);
         } else {
-          // Fallback to mock data if no real invoice found (for development/demo)
-          const mockInvoice: InvoiceData = {
-            id: 'demo-invoice',
-            invoiceNumber: 'BL-202501-DEMO',
-            customSlug: slug,
-            clientName: 'Demo Client Ltd.',
-            clientEmail: 'demo@example.com',
-            clientAddress: '123 Business Street\nLondon, SW1A 1AA\nUnited Kingdom',
-            clientPhone: '+44 20 7946 0958',
-            issueDate: '2025-01-15',
-            dueDate: '2025-02-14',
-            status: 'sent',
-            items: [
-              {
-                id: 'item-1',
-                description: 'Logo Design & Brand Identity Package',
-                quantity: 1,
-                unitPrice: 750.00,
-                total: 750.00
-              },
-              {
-                id: 'item-2',
-                description: 'Business Card Design',
-                quantity: 1,
-                unitPrice: 150.00,
-                total: 150.00
-              }
-            ],
-            subtotal: 900.00,
-            taxRate: 20,
-            taxAmount: 180.00,
-            total: 1080.00,
-            notes: 'Thank you for choosing BOLA LOGOS for your design needs. This is a demo invoice.',
-            paymentTerms: 'Payment due within 30 days',
-            paymentLink: 'https://paypal.me/bolalogos/1080',
-            createdAt: '2025-01-15T10:00:00Z',
-            updatedAt: '2025-01-15T10:00:00Z',
-            createdBy: 'demo'
-          };
-          setInvoice(mockInvoice);
+          // Invoice not found - show 404 error (no mock data fallback)
+          console.log('Invoice not found in any storage');
+          setInvoice(null);
         }
       } catch (error) {
         console.error('Error loading invoice:', error);
-        // Still show mock data on error for development
-        const mockInvoice: InvoiceData = {
-          id: 'error-fallback',
-          invoiceNumber: 'BL-202501-FALLBACK',
-          customSlug: slug || 'error-invoice',
-          clientName: 'Sample Client Ltd.',
-          clientEmail: 'client@example.com',
-          clientAddress: '123 Business Street\nLondon, SW1A 1AA\nUnited Kingdom',
-          clientPhone: '+44 20 7946 0958',
-          issueDate: '2025-01-15',
-          dueDate: '2025-02-14',
-          status: 'sent',
-          items: [
-            {
-              id: 'item-1',
-              description: 'Logo Design & Brand Identity Package',
-              quantity: 1,
-              unitPrice: 750.00,
-              total: 750.00
-            }
-          ],
-          subtotal: 750.00,
-          taxRate: 20,
-          taxAmount: 150.00,
-          total: 900.00,
-          notes: 'Sample invoice - there was an error loading the real invoice data.',
-          paymentTerms: 'Payment due within 30 days',
-          paymentLink: undefined,
-          createdAt: '2025-01-15T10:00:00Z',
-          updatedAt: '2025-01-15T10:00:00Z',
-          createdBy: 'fallback'
-        };
-        setInvoice(mockInvoice);
+        // Show error state instead of mock data
+        setInvoice(null);
       }
 
       setLoading(false);
