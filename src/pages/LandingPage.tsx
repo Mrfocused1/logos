@@ -6,17 +6,15 @@ import type { ContactFormData } from '../components/ui/ContactForm';
 import { useToast } from '../hooks/useToast';
 import { ToastContainer } from '../components/ui/Toast';
 import {
-  SlideButton,
   InteractiveHoverButton,
   GlassCard,
   TextRotate,
-  TextRevealByWord,
-  AnimatedCounter,
   AvatarGroup,
   TypewriterEffect,
   ServicesColumn,
   ContactForm,
-  Squares
+  Squares,
+  HorizontalTicker
 } from '../components/ui';
 
 const LandingPage: React.FC = () => {
@@ -262,11 +260,8 @@ const LandingPage: React.FC = () => {
         </motion.div>
       </section>
 
-      {/* Text Reveal Section */}
-      <TextRevealByWord
-        text="I believe exceptional design transforms businesses and captivates audiences. Every project begins with understanding your vision and translating it into powerful visual narratives that drive results and inspire action."
-        className="relative z-10"
-      />
+      {/* Horizontal Scroller Section */}
+      <HorizontalTicker />
 
       {/* Services Section with Typewriter Effect */}
       <section id="services" className="relative px-4 py-8 sm:py-20 overflow-visible z-10" aria-labelledby="services-heading">
